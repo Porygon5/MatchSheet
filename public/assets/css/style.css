@@ -1,10 +1,15 @@
 /* Variables CSS pour les couleurs */
 :root {
-    --primary-red: #E63946; /* Couleur principale du bouton et icônes */
-    --light-gray-bg: #E2E2E2; /* Couleur de fond de la carte */
-    --dark-text: #333; /* Couleur principale du texte */
-    --light-text: #666; /* Couleur du texte secondaire */
-    --white-text: #fff; /* Couleur du texte sur le bouton */
+    --primary-red: #E63946;
+    /* Couleur principale du bouton et icônes */
+    --light-gray-bg: #E2E2E2;
+    /* Couleur de fond de la carte */
+    --dark-text: #333;
+    /* Couleur principale du texte */
+    --light-text: #666;
+    /* Couleur du texte secondaire */
+    --white-text: #fff;
+    /* Couleur du texte sur le bouton */
     --border-radius: 10px;
     --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
@@ -26,6 +31,10 @@ body {
     overflow: hidden;
     padding: 28px;
     box-sizing: border-box;
+    height: 100%;
+    /*nouvel ajout*/
+    flex: 1 1 350px;
+    /*nouvel ajout */
 }
 
 /* Section de l'en-tête (date et heure) */
@@ -47,7 +56,8 @@ body {
 .team {
     display: flex;
     align-items: center;
-    gap: 14px; /* Espace entre l'icône et le nom de l'équipe */
+    gap: 14px;
+    /* Espace entre l'icône et le nom de l'équipe */
     font-weight: bold;
     font-size: 1.3em;
     color: var(--dark-text);
@@ -57,14 +67,16 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background-color: var(--primary-red); /* Couleur de fond de l'icône */
+    background-color: var(--primary-red);
+    /* Couleur de fond de l'icône */
     color: var(--white-text);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0.9em;
     font-weight: bold;
-    flex-shrink: 0; /* Empêche l'icône de rétrécir */
+    flex-shrink: 0;
+    /* Empêche l'icône de rétrécir */
 }
 
 .vs-separator {
@@ -77,7 +89,8 @@ body {
 /* Section du lieu */
 .match-location {
     display: flex;
-    gap: 10px; /* Espace entre l'icône de la broche et le texte */
+    gap: 10px;
+    /* Espace entre l'icône de la broche et le texte */
     color: var(--light-text);
     font-size: 1.1em;
     margin-bottom: 20px;
@@ -103,9 +116,22 @@ body {
     cursor: pointer;
     width: calc(100% - 56px);
     display: inline-block;
-    text-decoration: none; /* Si c'est un lien */
+    text-decoration: none;
+    /* Si c'est un lien */
 }
 
 .details-button:hover {
-    background-color: #d81b22; /* Rouge légèrement plus foncé au survol */
+    background-color: #d81b22;
+    /* Rouge légèrement plus foncé au survol */
+}
+
+/* nouvel ajout */
+
+.match-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    margin-top: 40px;
 }
