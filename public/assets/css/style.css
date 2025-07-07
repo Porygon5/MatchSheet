@@ -1,0 +1,111 @@
+/* Variables CSS pour les couleurs */
+:root {
+    --primary-red: #E63946; /* Couleur principale du bouton et icônes */
+    --light-gray-bg: #E2E2E2; /* Couleur de fond de la carte */
+    --dark-text: #333; /* Couleur principale du texte */
+    --light-text: #666; /* Couleur du texte secondaire */
+    --white-text: #fff; /* Couleur du texte sur le bouton */
+    --border-radius: 10px;
+    --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles généraux pour le corps */
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #FFF;
+    padding: 25px;
+}
+
+/* Styles de la carte principale (des matchs à venir) */
+.match-card {
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 550px;
+    overflow: hidden;
+    padding: 28px;
+    box-sizing: border-box;
+}
+
+/* Section de l'en-tête (date et heure) */
+.match-header {
+    font-size: 1.2em;
+    color: var(--light-text);
+    margin-bottom: 28px;
+    font-weight: bold;
+}
+
+/* Section des équipes */
+.match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 32px;
+}
+
+.team {
+    display: flex;
+    align-items: center;
+    gap: 14px; /* Espace entre l'icône et le nom de l'équipe */
+    font-weight: bold;
+    font-size: 1.3em;
+    color: var(--dark-text);
+}
+
+.team-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--primary-red); /* Couleur de fond de l'icône */
+    color: var(--white-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    flex-shrink: 0; /* Empêche l'icône de rétrécir */
+}
+
+.vs-separator {
+    font-size: 1.4em;
+    color: var(--primary-red);
+    font-weight: bold;
+    margin: 0 14px;
+}
+
+/* Section du lieu */
+.match-location {
+    display: flex;
+    gap: 10px; /* Espace entre l'icône de la broche et le texte */
+    color: var(--light-text);
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.location-icon {
+    /* Utilise une icône de broche, ici un emoji ou une balise <i> avec FontAwesome */
+    color: var(--primary-red);
+    font-size: 1.3em;
+}
+
+/* Bouton "Voir les détails" */
+.details-button {
+    text-align: center;
+    background-color: var(--primary-red);
+    color: var(--white-text);
+    padding: 18px 32px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.25em;
+    font-weight: bold;
+    cursor: pointer;
+    width: calc(100% - 56px);
+    display: inline-block;
+    text-decoration: none; /* Si c'est un lien */
+}
+
+.details-button:hover {
+    background-color: #d81b22; /* Rouge légèrement plus foncé au survol */
+}
