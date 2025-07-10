@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MatchSheet</title>
+  <link rel="stylesheet" href="header.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo-section">
+      <div class="logo"></div>
+      <h1 class="brand-name">MatchSheet</h1>
+    </div>
+
+    <!-- Menu desktop -->
+    <nav class="nav-menu">
+      <ul class="nav-links">
+        <li><a href="#" class="nav-link active">Accueil</a></li>
+        <li><a href="#" class="nav-link">Équipes</a></li>
+        <li><a href="#" class="nav-link">Matchs</a></li>
+        <li><a href="#" class="nav-link">Classement</a></li>
+      </ul>
+      <button class="connect-btn">Se connecter</button>
+    </nav>
+
+    <!-- Burger toggle -->
+    <div class="burger-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Menu mobile injecté dans .nav-menu -->
+  <div class="nav-menu mobile-nav" id="mobileMenu">
+    <ul class="nav-links">
+      <li><a href="#" class="nav-link" onclick="closeMobileMenu()">Accueil</a></li>
+      <li><a href="#" class="nav-link" onclick="closeMobileMenu()">Équipes</a></li>
+      <li><a href="#" class="nav-link" onclick="closeMobileMenu()">Matchs</a></li>
+      <li><a href="#" class="nav-link" onclick="closeMobileMenu()">Classement</a></li>
+    </ul>
+    <button class="connect-btn" onclick="closeMobileMenu()">Se connecter</button>
+  </div>
+
+  <script>
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const toggle = document.querySelector('.burger-toggle');
+      mobileMenu.classList.toggle('active');
+      toggle.classList.toggle('active');
+    }
+
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('active');
+      document.querySelector('.burger-toggle').classList.remove('active');
+    }
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 480) closeMobileMenu();
+    });
+
+    document.addEventListener('click', function (e) {
+      const header = document.querySelector('.header');
+      const menu = document.getElementById('mobileMenu');
+      if (!header.contains(e.target) && !menu.contains(e.target)) {
+        closeMobileMenu();
+      }
+    });
+  </script>
+</body>
+</html>
