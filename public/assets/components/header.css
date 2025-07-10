@@ -1,25 +1,13 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 :root {
     --primary-red: #E63946;
-    /* Couleur principale du bouton et icônes */
     --light-gray-bg: #E2E2E2;
-    /* Couleur de fond de la carte */
     --dark-text: #333;
-    /* Couleur principale du texte */
     --light-text: #666;
-    /* Couleur du texte secondaire */
     --white-text: #fff;
-    /* Couleur du texte sur le bouton */
-    --border-radius: 10px;
-    --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    --border-radius: 6px; /* 60% de 10px */
+    --box-shadow: 0 4px 9px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles généraux pour le corps */
 body {
     font-family: Arial, sans-serif;
     min-height: 100vh;
