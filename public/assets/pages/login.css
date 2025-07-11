@@ -1,0 +1,118 @@
+/* Adaptation login, reprends les variables :root et le style général */
+/* body {
+    background: var(--light-gray-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+} */
+ 
+.login-wrapper {
+    margin: 72px auto 0 auto;
+    background: #fff;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    padding: 36px 32px;
+    max-width: 370px;
+    width: 92vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+.login-title {
+    color: var(--dark-text);
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+    letter-spacing: -1px;
+}
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+.login-form label {
+    color: var(--dark-text);
+    font-weight: 600;
+    font-size: 0.95em;
+    display: block;
+    margin-bottom: 4px;
+}
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 13px;
+    border-radius: var(--border-radius);
+    border: 1.4px solid var(--light-gray-bg);
+    font-size: 1em;
+    background: #f7f7f7;
+    color: var(--dark-text);
+    transition: border-color 0.2s;
+}
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    background: #fff;
+}
+.login-form .submit-btn {
+    margin-top: 5px;
+    width: 100%;
+    background: var(--primary-red);
+    color: var(--white-text);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 13px 0;
+    font-size: 1.04em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.19);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    text-decoration: none;
+    display: block;
+    letter-spacing: 0.03em;
+}
+.login-form .submit-btn:hover {
+    background: #d81b22;
+    transform: translateY(-1.2px);
+    box-shadow: 0 6px 22px rgba(239, 68, 68, 0.23);
+}
+.login-link {
+    font-size: 0.93em;
+    text-align: center;
+    color: var(--dark-text);
+    margin-top: 7px;
+}
+.login-link a {
+    color: var(--primary-red);
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.login-link a:hover {
+    color: #d81b22;
+}
+@media (max-width: 480px) {
+    .login-wrapper {
+    margin-top: 33px;
+    padding: 18px 8px;
+    max-width: 97vw;
+    gap: 13px;
+    }
+    .login-title {
+    font-size: 1.08em;
+    }
+    .login-form input[type="email"],
+    .login-form input[type="password"] {
+    padding: 9px 8px;
+    font-size: 0.95em;
+    }
+    .login-form .submit-btn {
+    font-size: 0.93em;
+    padding: 10px 0;
+    }
+}

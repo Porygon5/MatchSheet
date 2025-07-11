@@ -112,6 +112,7 @@ body {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  text-decoration: none;
 }
 
 .connect-btn:hover {
