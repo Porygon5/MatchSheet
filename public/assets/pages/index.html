@@ -9,9 +9,14 @@
 </head>
 
 <body>
+    <div class="mobile-tabs">
+        <button class="tab-btn active" onclick="showTab('upcoming')">Prochains matchs</button>
+        <button class="tab-btn" onclick="showTab('results')">Derniers résultats</button>
+    </div>
+
     <h1 class="title">Prochains matchs</h1>
 
-    <div class="match-container">
+    <div class="match-container" id="upcoming">
         <div class="match-card">
             <div class="match-header">
                 <span class="match-date">Samedi 7 juin 2025</span> - <span class="match-time">15h00</span>
@@ -80,7 +85,7 @@
 
     <h1 class="title">Derniers résultats</h1>
 
-    <div class="last-match-container"> 
+    <div class="last-match-container" id="results"> 
         <div class="match-card">
             <div class="match-header">
                 <span class="match-date">Samedi 7 juin 2025</span>
@@ -137,6 +142,19 @@
         </div>
     </div>
 
+    <script>
+    function showTab(tab) {
+        const upcoming = document.getElementById('upcoming');
+        const results = document.getElementById('results');
+        const buttons = document.querySelectorAll('.tab-btn');
+
+        upcoming.style.display = tab === 'upcoming' ? 'flex' : 'none';
+        results.style.display = tab === 'results' ? 'flex' : 'none';
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-btn[onclick*="${tab}"]`).classList.add('active');
+    }
+    </script>
 </body>
 
 </html>

@@ -1,27 +1,5 @@
 :root {
     --primary-red: #E63946;
-    --light-gray-bg: #E2E2E2;
-    --dark-text: #333;
-    --light-text: #666;
-    --white-text: #fff;
-    --border-radius: 6px; /* 60% de 10px */
-    --box-shadow: 0 4px 9px rgba(0, 0, 0, 0.1);
-}
-
-body {
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    background-color: #FFF;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-    --primary-red: #E63946;
     /* Couleur principale du bouton et icônes */
     --light-gray-bg: #E2E2E2;
     /* Couleur de fond de la carte */
@@ -64,8 +42,13 @@ body {
   margin-left: 38.4px; /* 64px × 0.6 = 38.4px */
   height: 38.4px; /* 64px × 0.6 = 38.4px */
   width: 38.4px; /* 64px × 0.6 = 38.4px */
-  background-color: white;
-  border-radius: var(--border-radius);
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* garde les proportions */
+  display: block;        /* élimine le petit espace inline des images */
 }
 
 .brand-name {

@@ -117,3 +117,39 @@
     margin-top: 27px;
     margin-bottom: 38px; /* 60% de 63px */
 }
+
+.mobile-tabs {
+  display: none;
+  justify-content: center;
+  margin: 10px 0;
+  gap: 10px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.9rem;
+  background-color: #f0f0f0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: bold;
+  color: var(--dark-text);
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  border-bottom: 2px solid var(--primary-red);
+  background-color: #fff;
+  color: var(--primary-red);
+}
+
+@media (max-width: 768px) {
+  .mobile-tabs {
+    display: flex;
+  }
+
+  .match-container,
+  .last-match-container {
+    margin-top: 0;
+  }
+}
