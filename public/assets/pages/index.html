@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchSheet - Page d'accueil</title>
     <link rel="stylesheet" href="/MatchSheet/public/assets/pages/index.css">
 </head>
 
@@ -14,7 +8,7 @@
         <button class="tab-btn" onclick="showTab('results')">Derniers résultats</button>
     </div>
 
-    <h1 class="title">Prochains matchs</h1>
+    <h1 class="title" id="title-upcoming">Prochains matchs</h1>
 
     <div class="match-container" id="upcoming">
         <div class="match-card">
@@ -83,7 +77,7 @@
         </div>
     </div>
 
-    <h1 class="title">Derniers résultats</h1>
+    <h1 class="title" id="title-results">Derniers résultats</h1>
 
     <div class="last-match-container" id="results"> 
         <div class="match-card">
@@ -147,9 +141,14 @@
         const upcoming = document.getElementById('upcoming');
         const results = document.getElementById('results');
         const buttons = document.querySelectorAll('.tab-btn');
+        const titleUpcoming = document.getElementById('title-upcoming');
+        const titleResults = document.getElementById('title-results');
 
         upcoming.style.display = tab === 'upcoming' ? 'flex' : 'none';
         results.style.display = tab === 'results' ? 'flex' : 'none';
+
+        titleUpcoming.style.display = tab === 'upcoming' ? 'block' : 'none';
+        titleResults.style.display = tab === 'results' ? 'block' : 'none';
 
         buttons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.tab-btn[onclick*="${tab}"]`).classList.add('active');

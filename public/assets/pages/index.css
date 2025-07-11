@@ -144,12 +144,17 @@
 }
 
 @media (max-width: 768px) {
-  .mobile-tabs {
+    .mobile-tabs {
     display: flex;
-  }
+    }
 
-  .match-container,
-  .last-match-container {
+    .match-container,
+    .last-match-container {
     margin-top: 0;
-  }
+    }
+
+    #results,
+    #title-results {
+        display: none;
+    }
 }
