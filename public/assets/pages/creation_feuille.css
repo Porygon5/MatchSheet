@@ -1,0 +1,133 @@
+.feuille-form {
+    margin: 0 auto;
+    max-width: 460px;
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 32px 28px 18px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.feuille-form label {
+    color: var(--dark-text);
+    font-weight: 600;
+    font-size: 1em;
+    margin-bottom: 3px;
+}
+.feuille-form input[type="text"],
+.feuille-form input[type="date"],
+.feuille-form input[type="time"],
+.feuille-form select {
+    padding: 10px 13px;
+    border-radius: var(--border-radius);
+    border: 1.3px solid var(--light-gray-bg);
+    background: #f7f7f7;
+    color: var(--dark-text);
+    font-size: 1em;
+    margin-bottom: 0;
+    transition: border-color 0.2s;
+}
+.feuille-form input:focus,
+.feuille-form select:focus {
+    border-color: var(--primary-red);
+    outline: none;
+    background: #fff;
+}
+@media (max-width: 600px) {
+    .feuille-form {
+        padding: 18px 7px;
+        max-width: 99vw;
+    }
+    .feuille-main {
+        padding: 0 3px;
+    }
+}
+
+/* Bloc principal du formulaire (login, création, etc) */
+.main-form {
+    margin: 0 auto;
+    max-width: 420px;
+    background: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 32px 28px 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.main-form label {
+    color: var(--dark-text);
+    font-weight: 600;
+    font-size: 1em;
+    margin-bottom: 3px;
+}
+
+.main-form input[type="text"],
+.main-form input[type="email"],
+.main-form input[type="password"],
+.main-form input[type="date"],
+.main-form input[type="time"],
+.main-form select {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: var(--border-radius);
+    border: 1.3px solid var(--light-gray-bg);
+    font-size: 1em;
+    background: #f7f7f7;
+    color: var(--dark-text);
+    margin-bottom: 0;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.main-form input:focus,
+.main-form select:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    background: #fff;
+}
+
+/* Bouton principal (connexion/créer etc) */
+.main-form .form-btn,
+.main-form button[type="submit"] {
+    margin-top: 7px;
+    width: 100%;
+    background: var(--primary-red);
+    color: var(--white-text);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 13px 0;
+    font-size: 1.04em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.19);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    text-decoration: none;
+    display: block;
+    letter-spacing: 0.03em;
+}
+.main-form .form-btn:hover,
+.main-form button[type="submit"]:hover {
+    background: #d81b22;
+    transform: translateY(-1.2px);
+    box-shadow: 0 6px 22px rgba(239, 68, 68, 0.23);
+}
+
+@media (max-width: 600px) {
+    .main-form {
+        padding: 18px 7px 12px 7px;
+        max-width: 99vw;
+    }
+}

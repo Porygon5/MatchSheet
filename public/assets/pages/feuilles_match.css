@@ -13,31 +13,6 @@
     margin: 0 0 18px 0;
 }
 
-.create-btn {
-    background: var(--primary-red);
-    color: var(--white-text);
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 15px 32px;
-    font-size: 1.08em;
-    font-weight: 700;
-    box-shadow: 0 4px 15px rgba(239,68,68,0.19);
-    cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-    display: block;
-    text-decoration: none;
-    margin: 0 auto;
-    width: fit-content;
-    min-width: 210px;
-    text-align: center;
-}
-
-.create-btn:hover {
-    background: #d81b22;
-    box-shadow: 0 6px 22px rgba(239,68,68,0.23);
-    transform: translateY(-1.2px);
-}
-
 .feuille-section {
     margin-bottom: 32px;
 }
@@ -132,12 +107,6 @@
     }
     .title-feuilles h1 {
         font-size: 1.15em;
-    }
-    .create-btn {
-        width: 100%;
-        min-width: 0;
-        padding: 13px 0;
-        font-size: 1em;
     }
     .section-title {
         padding-left: 5px;

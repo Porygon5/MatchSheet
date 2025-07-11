@@ -1,0 +1,69 @@
+<head>
+  <link rel="stylesheet" href="/MatchSheet/public/assets/pages/creation_feuille.css" />
+  <title>Créer une feuille de match</title>
+</head>
+<body>
+  <div class="feuille-main">
+    <h1 class="title">Créer une feuille de match</h1>
+    <form class="feuille-form" action="process_creer_feuille.php" method="POST" autocomplete="on">
+      <div class="form-row">
+        <label for="date">Date du match</label>
+        <input type="date" name="date" id="date" required>
+      </div>
+      <div class="form-row">
+        <label for="heure">Heure du match</label>
+        <input type="time" name="heure" id="heure" required>
+      </div>
+      <div class="form-row">
+        <label for="equipe_dom">Équipe à domicile</label>
+        <select name="equipe_dom" id="equipe_dom" required>
+          <option value="">Sélectionnez...</option>
+          <!-- Options dynamiques PHP/SQL -->
+          <option value="1">FC Lions</option>
+          <option value="2">US Dragons</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="equipe_ext">Équipe extérieure</label>
+        <select name="equipe_ext" id="equipe_ext" required>
+          <option value="">Sélectionnez...</option>
+          <option value="3">AC Tiger</option>
+          <option value="4">RC Panthers</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="lieu">Lieu</label>
+        <input type="text" name="lieu" id="lieu" placeholder="Stade, adresse..." required>
+      </div>
+      <div class="form-row">
+        <label for="competition">Compétition</label>
+        <input type="text" name="competition" id="competition" placeholder="Nom du championnat..." required>
+      </div>
+      <div class="form-row">
+        <label for="categorie">Catégorie</label>
+        <select name="categorie" id="categorie" required>
+          <option value="">Sélectionnez...</option>
+          <option value="U13">U13</option>
+          <option value="U15">U15</option>
+          <option value="U18">U18</option>
+          <option value="Sénior">Sénior</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="arbitre_central">Arbitre central</label>
+        <input type="text" name="arbitre_central" id="arbitre_central" required>
+      </div>
+      <div class="form-row">
+        <label for="arbitre_assistant1">Arbitre assistant 1</label>
+        <input type="text" name="arbitre_assistant1" id="arbitre_assistant1">
+      </div>
+      <div class="form-row">
+        <label for="arbitre_assistant2">Arbitre assistant 2</label>
+        <input type="text" name="arbitre_assistant2" id="arbitre_assistant2">
+      </div>
+      <div class="form-row">
+        <button type="submit" class="create-btn" style="width:100%;">Créer la feuille de match</button>
+      </div>
+    </form>
+  </div>
+</body>
