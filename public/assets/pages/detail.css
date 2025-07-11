@@ -24,6 +24,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex: 1;
 }
 
 .team-icon {
@@ -32,7 +33,6 @@
     border-radius: 50%;
     background-color: transparent; /* fond transparent */
     border: 2px solid #FFFFFF; /* cercle fin blanc */
-    color: var(--primary-red);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -41,6 +41,9 @@
     flex-shrink: 0;
 }
 
+.team:last-child {
+            justify-content: flex-end;
+        }
 
 .team-name {
     font-size: 18px;
@@ -50,11 +53,12 @@
 .match-status {
     background: rgba(255, 255, 255, 0.2);
     padding: 8px 16px;
-    justify-content: center;
+    text-align: center;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
+    flex: 1;
 }
 
 .data-status {
@@ -197,15 +201,6 @@
     color: #6b7280;
     font-weight: 600;
 }
-
-.goal { border-left-color: #10b981; }
-.right.goal { border-right-color: #10b981; }
-.yellow-card { border-left-color: #f59e0b; }
-.right.yellow-card { border-right-color: #f59e0b; }
-.red-card { border-left-color: #ef4444; }
-.right.red-card { border-right-color: #ef4444; }
-.substitution { border-left-color: #3b82f6; }
-.right.substitution { border-right-color: #3b82f6; }
 
 .empty-space {
     height: 71px;
