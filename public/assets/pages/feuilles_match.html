@@ -1,0 +1,97 @@
+<head>
+    <link rel="stylesheet" href="/MatchSheet/public/assets/pages/feuilles_match.css" />
+</head>
+<body>
+  <div class="feuille-main">
+    <div class="title-feuilles">
+      <h1 class="title">Feuilles de match</h1>
+      <a href="creer_feuille.php" class="create-btn">+ Créer une feuille de match</a>
+    </div>
+
+    <div class="feuille-section">
+      <h2 class="section-title section-title-acompleter">À compléter</h2>
+      <div class="match-container">
+        <!-- Exemple d'une feuille à compléter -->
+        <div class="match-card feuille-card-acompleter">
+          <div class="match-header">
+            Samedi 7 juin 2025 - 15h00
+          </div>
+          <div class="match-teams">
+            <div class="team">
+              <div class="team-icon">FC</div>
+              <span class="team-name">FC Lions</span>
+            </div>
+            <div class="vs-separator">VS</div>
+            <div class="team">
+              <div class="team-name">AC Tiger</div>
+              <span class="team-icon">AC</span>
+            </div>
+          </div>
+          <div class="match-location">
+            <span class="location-icon">📍</span>
+            <span class="location-name">Stade Municipal - Paris</span>
+          </div>
+          <div class="feuille-status badge-acompleter">À compléter</div>
+          <a href="completer_feuille.php?id=1" class="details-button">Compléter</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="feuille-section">
+      <h2 class="section-title section-title-aconclure">À conclure</h2>
+      <div class="match-container">
+        <div class="match-card feuille-card-aconclure">
+          <div class="match-header">
+            Lundi 9 juin 2025 - 20h45
+          </div>
+          <div class="match-teams">
+            <div class="team">
+              <div class="team-icon">OL</div>
+              <span class="team-name">Olympique Lyon</span>
+            </div>
+            <div class="vs-separator">VS</div>
+            <div class="team">
+              <div class="team-name">Olympique Marseille</div>
+              <span class="team-icon">OM</span>
+            </div>
+          </div>
+          <div class="match-location">
+            <span class="location-icon">📍</span>
+            <span class="location-name">Groupama Stadium - Lyon</span>
+          </div>
+          <div class="feuille-status badge-aconclure">À conclure</div>
+          <a href="conclure_feuille.php?id=2" class="details-button">Conclure</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="feuille-section">
+      <h2 class="section-title section-title-terminee">Terminées</h2>
+      <div class="match-container">
+        <div class="match-card feuille-card-terminee">
+          <div class="match-header">
+            Dimanche 8 juin 2025 - 18h00
+          </div>
+          <div class="match-teams">
+            <div class="team">
+              <div class="team-icon">US</div>
+              <span class="team-name">US Dragons</span>
+            </div>
+            <div class="vs-separator">VS</div>
+            <div class="team">
+              <div class="team-name">RC Panthers</div>
+              <span class="team-icon">RC</span>
+            </div>
+          </div>
+          <div class="match-location">
+            <span class="location-icon">📍</span>
+            <span class="location-name">Stade Jean Bouin - Lyon</span>
+          </div>
+          <div class="feuille-status badge-terminee">Terminée</div>
+          <a href="match.php?id=3" class="details-button">Voir la feuille</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

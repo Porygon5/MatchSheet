@@ -19,3 +19,120 @@ body {
     min-height: 100vh;
     background-color: #FFF;
 }
+
+.title {
+    text-align: center;
+    font-size: 1.5em; /* 60% de 2.5em */
+    color: var(--dark-text);
+    margin-bottom: 24px; /* 60% de 40px */
+    font-weight: bold;
+    margin-top: 27px;
+    margin-bottom: 38px; /* 60% de 63px */
+}
+
+.match-card {
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 330px;
+    align-items: stretch;
+    max-height: 232px;
+    overflow: hidden;
+    padding: 17px;
+    box-sizing: border-box;
+    height: 100%;
+    flex: 1 1 210px;
+    flex-direction: row;
+    min-height: 149px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.match-header {
+    font-size: 0.72em;
+    color: var(--light-text);
+    margin-bottom: 17px;
+    font-weight: bold;
+}
+.match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 19px;
+}
+.team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 0.78em;
+    color: var(--dark-text);
+}
+.team-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: var(--primary-red);
+    color: var(--white-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+.team-name {
+    text-align: center;
+}
+.vs-separator {
+    font-size: 0.84em;
+    color: var(--primary-red);
+    font-weight: bold;
+    min-width: fit-content;
+    text-align: center;
+    margin: 0 8px;
+}
+.match-location {
+    display: flex;
+    gap: 6px;
+    color: var(--light-text);
+    font-size: 0.66em;
+    margin-bottom: 12px;
+    align-items: center;
+}
+.location-icon {
+    color: var(--primary-red);
+    font-size: 0.78em;
+}
+.details-button {
+    text-align: center;
+    background-color: var(--primary-red);
+    color: var(--white-text);
+    padding: 11px 19px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.75em;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    display: inline-block;
+    text-decoration: none;
+}
+.details-button:hover {
+    background-color: #d81b22;
+}
+.match-container,
+.last-match-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 18px;
+    margin-top: 24px;
+}
+@media (max-width: 768px) {
+    .match-container,
+    .last-match-container {
+        margin-top: 0;
+    }
+}

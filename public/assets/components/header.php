@@ -25,7 +25,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       <ul class="nav-links">
         <li><a href="index.php" class="nav-link <?= $currentPage === 'index.php' ? 'active' : '' ?>">Accueil</a></li>
         <li><a href="equipes.php" class="nav-link <?= $currentPage === 'equipes.php' ? 'active' : '' ?>">Équipes</a></li>
-        <li><a href="matchs.php" class="nav-link <?= $currentPage === 'matchs.php' ? 'active' : '' ?>">Matchs</a></li>
+        <li><a href="feuilles_match.php" class="nav-link <?= $currentPage === 'feuilles_match.php' ? 'active' : '' ?>">Matchs</a></li>
         <li><a href="classement.php" class="nav-link <?= $currentPage === 'classement.php' ? 'active' : '' ?>">Classement</a></li>
       </ul>
       <a href="login.php" class="connect-btn">Se connecter</a>
@@ -42,7 +42,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <ul class="nav-links">
       <li><a href="index.php" class="nav-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" onclick="closeMobileMenu()">Accueil</a></li>
       <li><a href="equipes.php" class="nav-link <?= $currentPage === 'equipes.php' ? 'active' : '' ?>" onclick="closeMobileMenu()">Équipes</a></li>
-      <li><a href="matchs.php" class="nav-link <?= $currentPage === 'matchs.php' ? 'active' : '' ?>" onclick="closeMobileMenu()">Matchs</a></li>
+      <li><a href="feuilles_match.php" class="nav-link <?= $currentPage === 'feuilles_match.php' ? 'active' : '' ?>" onclick="closeMobileMenu()">Matchs</a></li>
       <li><a href="classement.php" class="nav-link <?= $currentPage === 'classement.php' ? 'active' : '' ?>" onclick="closeMobileMenu()">Classement</a></li>
     </ul>
     <button class="connect-btn" onclick="closeMobileMenu()">Se connecter</button>
