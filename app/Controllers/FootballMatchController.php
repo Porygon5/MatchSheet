@@ -22,8 +22,29 @@ class FootballMatchController
 
     public function index()
     {
+        // Récupère tous les matchs enrichis
         $matchs = $this->model->getAll();
-        require __DIR__ . '/../Views/feuilles_match.php';
+
+        // Classe les matchs par statut
+        $matchsACompleter = [];
+        $matchsAConclure = [];
+        $matchsTermines = [];
+
+        foreach ($matchs as $match) {
+            if ($match->scoreEquipeDom !== null && $match->scoreEquipeExt !== null) {
+                $matchsTermines[] = $match;
+            } elseif ($match->idJoueurSelectionne !== null) {
+                $matchsAConclure[] = $match;
+            } else {
+                $matchsACompleter[] = $match;
+            }
+        }
+
+        $title = "Feuilles de match";
+        $pageCss = "/assets/pages/feuilles_match.css";
+        $view = __DIR__ . '/../Views/feuilles_match.php';
+
+        require __DIR__ . '/../Views/layout.php';
     }
 
     public function createForm()
@@ -90,5 +111,36 @@ class FootballMatchController
             header('Location: /matchs');
             exit;
         }
+    }
+
+    public function editForm()
+    {
+        require_once __DIR__ . '/../Models/JoueurModel.php';
+        require_once __DIR__ . '/../Entities/Joueur.php';
+
+        if (!isset($_GET['id'])) {
+            http_response_code(400);
+            echo "Paramètre 'id' manquant";
+            return;
+        }
+
+        $matchId = intval($_GET['id']);
+        $match = $this->model->findById($matchId);
+
+        if (!$match) {
+            http_response_code(404);
+            echo "Match introuvable";
+            return;
+        }
+
+        $joueurModel = new \App\Models\JoueurModel($this->pdo);
+        $joueursDom = $joueurModel->getByEquipe($match->idEquipeDom);
+        $joueursExt = $joueurModel->getByEquipe($match->idEquipeExt);
+
+        $title = "Compléter une feuille de match";
+        $pageCss = "/assets/pages/completer_feuille.css";
+        $view = __DIR__ . '/../Views/completer_feuille.php';
+
+        require __DIR__ . '/../Views/layout.php';
     }
 }

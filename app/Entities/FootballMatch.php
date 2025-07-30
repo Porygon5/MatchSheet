@@ -4,6 +4,7 @@
 namespace App\Entities;
 
 use DateTime;
+use IntlDateFormatter;
 
 class FootballMatch
 {
@@ -19,6 +20,16 @@ class FootballMatch
     public ?int $scoreEquipeDom = null;
     public ?int $idJoueurSelectionne = null;
 
+    public ?string $equipe_dom_nom = null;
+    public ?string $equipe_ext_nom = null;
+    public ?string $lieu_nom = null;
+
+    public ?object $equipeDom = null;
+    public ?object $equipeExt = null;
+    public ?object $lieu = null;
+
+    public string $dateFormatee;
+
     public function __construct(array $data)
     {
         $this->id = $data['id'] ?? 0;
@@ -32,5 +43,20 @@ class FootballMatch
         $this->idEquipeDom = $data['id_equipe_dom'];
         $this->scoreEquipeDom = $data['score_equipe_dom'] ?? null;
         $this->idJoueurSelectionne = $data['id_joueur_selectionne'] ?? null;
+
+        $this->equipe_dom_nom = $data['equipe_dom_nom'] ?? null;
+        $this->equipe_ext_nom = $data['equipe_ext_nom'] ?? null;
+        $this->lieu_nom = $data['lieu_nom'] ?? null;
+
+        // Formatage de la date.
+        $formatter = new IntlDateFormatter(
+            'fr_FR',
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::SHORT,
+            'Europe/Paris',
+            IntlDateFormatter::GREGORIAN,
+            'EEEE d MMMM y - HH:mm'
+        );
+        $this->dateFormatee = ucfirst($formatter->format($this->dateHeure));
     }
 }
