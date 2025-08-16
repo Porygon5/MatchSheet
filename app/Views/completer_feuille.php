@@ -27,11 +27,9 @@
                             </select>
 
                             <select name="placement_dom[<?= $joueur->id ?>]">
-                                <!-- A générer dynamiquement depuis la table placement -->
-                                <option value="">Placement</option>
-                                <option value="Gauche">Gauche</option>
-                                <option value="Centre">Centre</option>
-                                <option value="Droite">Droite</option>
+                                <?php foreach ($placements as $index => $placement): ?>
+                                    <option value="<?= $placement->id_placement ?>"><?= $placement->nom ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
