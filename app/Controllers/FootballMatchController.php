@@ -5,7 +5,6 @@ use App\Models\ArbitreModel;
 use App\Models\EquipeModel;
 use App\Models\LieuModel;
 use App\Models\FootballMatchModel;
-use App\Models\PlacementModel;
 
 require_once __DIR__ . '/../Models/FootballMatchModel.php';
 
@@ -114,13 +113,16 @@ class FootballMatchController
         }
     }
 
-    public function editForm()
+    public function selection()
     {
         require_once __DIR__ . '/../Entities/Joueur.php';
         require_once __DIR__ . '/../Models/JoueurModel.php';
 
         require_once __DIR__ . '/../Entities/Placement.php';
         require_once __DIR__ . '/../Models/PlacementModel.php';
+
+        require_once __DIR__ . '/../Entities/Poste.php';
+        require_once __DIR__ . '/../Models/PosteModel.php';
 
         if (!isset($_GET['id'])) {
             http_response_code(400);
@@ -144,6 +146,10 @@ class FootballMatchController
         $placementModel = new \App\Models\PlacementModel($this->pdo);
 
         $placements = $placementModel->getAll();
+
+        $posteModel = new \App\Models\PosteModel($this->pdo);
+
+        $postes = $posteModel->getAll();
 
         $title = "Compléter une feuille de match";
         $pageCss = "/assets/pages/completer_feuille.css";

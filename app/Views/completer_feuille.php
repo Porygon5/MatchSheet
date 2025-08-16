@@ -18,12 +18,9 @@
                         
                         <div class="player-selects">
                             <select name="poste_dom[<?= $joueur->id ?>]">
-                                <!-- A générer dynamiquement depuis la table postes -->
-                                <option value="">Poste</option>
-                                <option value="Gardien">Gardien</option>
-                                <option value="Défenseur">Défenseur</option>
-                                <option value="Milieu">Milieu</option>
-                                <option value="Attaquant">Attaquant</option>
+                                <?php foreach ($postes as $index => $poste): ?>
+                                    <option value="<?= $poste->id_poste ?>"><?= $poste->nom ?></option>
+                                <?php endforeach; ?>
                             </select>
 
                             <select name="placement_dom[<?= $joueur->id ?>]">
@@ -72,7 +69,7 @@
             </div>
         </div>
 
-        <!-- Équipe extérieure (même structure) -->
+        <!-- Équipe extérieure en fonction de l'entraîneur -->
         <div class="team-section">
             <h2><?= htmlspecialchars($match->equipe_ext_nom) ?> — Équipe extérieure</h2>
             
@@ -86,19 +83,16 @@
                         </div>
                         
                         <div class="player-selects">
-                            <select name="poste_ext[<?= $joueur->id ?>]">
-                                <option value="">Poste</option>
-                                <option value="Gardien">Gardien</option>
-                                <option value="Défenseur">Défenseur</option>
-                                <option value="Milieu">Milieu</option>
-                                <option value="Attaquant">Attaquant</option>
+                            <select name="poste_dom[<?= $joueur->id ?>]">
+                                <?php foreach ($postes as $index => $poste): ?>
+                                    <option value="<?= $poste->id_poste ?>"><?= $poste->nom ?></option>
+                                <?php endforeach; ?>
                             </select>
 
-                            <select name="placement_ext[<?= $joueur->id ?>]">
-                                <option value="">Placement</option>
-                                <option value="Gauche">Gauche</option>
-                                <option value="Centre">Centre</option>
-                                <option value="Droite">Droite</option>
+                            <select name="placement_dom[<?= $joueur->id ?>]">
+                                <?php foreach ($placements as $index => $placement): ?>
+                                    <option value="<?= $placement->id_placement ?>"><?= $placement->nom ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>

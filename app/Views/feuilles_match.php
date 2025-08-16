@@ -25,7 +25,7 @@
                     <span class="location-name"><?= $match->lieu_nom ?></span>
                 </div>
                 <div class="feuille-status badge-acompleter">À compléter</div>
-                <a href="/matchs/edit?id=<?= $match->id ?>" class="details-button">Compléter</a>
+                <a href="/matchs/selection?id=<?= $match->id ?>" class="details-button">Compléter</a>
             </div>
             <?php endforeach; ?>
 		</div>
