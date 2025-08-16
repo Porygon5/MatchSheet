@@ -1,12 +1,14 @@
 <?php
 $requestUri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $currentPage = explode('/', $requestUri)[0];
+$isLoggedIn = isset($_SESSION['user']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
   <head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<base href="/" />
 		<title>MatchSheet</title>
 	</head>
 	<body>
@@ -33,7 +35,13 @@ $currentPage = explode('/', $requestUri)[0];
             <a href="/classement" class="nav-link <?= $currentPage === 'classement' ? 'active' : '' ?>">Classement</a>
 					</li>
 				</ul>
-				<a href="login.php" class="connect-btn">Se connecter</a>
+				<?php if ($isLoggedIn): ?>
+					<form action="/logout" method="POST" style="display:inline;">
+						<button type="submit" class="connect-btn">Se déconnecter</button>
+					</form>
+				<?php else: ?>
+					<a href="/login" class="connect-btn">Se connecter</a>
+				<?php endif; ?>
 			</nav>
 			<!-- Burger toggle -->
 			<div class="burger-toggle" onclick="toggleMobileMenu()">
@@ -56,7 +64,13 @@ $currentPage = explode('/', $requestUri)[0];
 					<a href="/classement" class="nav-link <?= $currentPage === 'classement' ? 'active' : '' ?>" onclick="closeMobileMenu()">Classement </a>
 				</li>
 			</ul>
-			<button class="connect-btn" onclick="closeMobileMenu()">Se connecter</button>
+			<?php if ($isLoggedIn): ?>
+				<form action="/logout" method="POST">
+					<button type="submit" class="connect-btn" onclick="closeMobileMenu()">Se déconnecter</button>
+				</form>
+			<?php else: ?>
+				<a href="/login" class="connect-btn" onclick="closeMobileMenu()">Se connecter</a>
+			<?php endif; ?>
 		</div>
 		<script>
 			function toggleMobileMenu() {

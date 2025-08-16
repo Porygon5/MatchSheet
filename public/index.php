@@ -1,6 +1,10 @@
 <?php
 // public/index.php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Chargement base de données
 $pdo = require_once __DIR__ . '/../config/db.php';
 

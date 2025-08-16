@@ -42,8 +42,7 @@
     display: block;
     margin-bottom: 4px;
 }
-.login-form input[type="email"],
-.login-form input[type="password"] {
+.login-form input {
     width: 100%;
     padding: 12px 13px;
     border-radius: var(--border-radius);

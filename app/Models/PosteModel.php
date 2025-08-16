@@ -17,7 +17,7 @@ class PosteModel
     }
 
     /**
-     * Récupère tous les poste sous forme d'objets Poste
+     * Récupère tous les postes sous forme d'objets Poste
      * 
      * @return Poste[]
      */

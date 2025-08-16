@@ -3,8 +3,9 @@
 
 return [
     '/' => ['controller' => 'HomeController', 'method' => 'index'],
-    '/login' => ['controller' => 'AuthController', 'method' => 'login'],
-    '/logout' => ['controller' => 'AuthController', 'method' => 'logout'],
+    '/login' => ['controller' => 'LoginController', 'method' => 'showLoginForm'],
+    '/login/submit' => ['controller' => 'LoginController', 'method' => 'login'],
+    '/logout' => ['controller' => 'LoginController', 'method' => 'logout'],
     '/matchs' => ['controller' => 'FootballMatchController', 'method' => 'index'],
     '/matchs/view' => ['controller' => 'FootballMatchController', 'method' => 'view'],
     '/matchs/create' => ['controller' => 'FootballMatchController', 'method' => 'createForm'],
