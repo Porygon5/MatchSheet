@@ -74,4 +74,15 @@ class EquipeModel
             $row['id_entraineur'],
         );
     }
+
+    /**
+     * Retourne l'ID de l'équipe dont $userId est l'entraîneur
+     */
+    public function findTeamByCoachId( int $userId ) {
+        $sql = "SELECT id_equipe FROM equipes WHERE id_entraineur = :id LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $userId]);
+        $row = $stmt->fetch();
+        return $row ? (int) $row['id_equipe'] : null;
+    }
 }

@@ -132,11 +132,47 @@ class FootballMatchController
 
         $matchId = intval($_GET['id']);
         $match = $this->model->findById($matchId);
-
+        
         if (!$match) {
             http_response_code(404);
             echo "Match introuvable";
             return;
+        }
+
+        if (empty($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        $user = $_SESSION['user'];
+        $role = (int) $user['id_permission'];
+
+        $canEditDom = true;
+        $canEditExt = true;
+        
+        // Si l'utilisateur à les permissions d'entraineur
+        if ((int) $user['id_permission'] === 2) {
+            // On récupère l'équipe depuis la session.
+            $coachEquipeId = $_SESSION['user']['coach_equipe_id'] ?? null;
+
+            // Sinon, on la cherche depuis l'identifiant de l'utilisateur
+            if ($coachEquipeId === null) {
+                require_once __DIR__ . '/../Models/EquipeModel.php';
+                $equipeModel = new \App\Models\EquipeModel($this->pdo);
+                $coachEquipeId = $equipeModel->findTeamByCoachId( (int) $user['id']);
+            }
+
+            // On vérifie que le match contient bien une équipe de l'entraîneur
+            if ($coachEquipeId === null ||
+            ((int) $match->idEquipeDom !== (int) $coachEquipeId
+            && (int) $match->idEquipeExt !== (int) $coachEquipeId)) {
+                http_response_code(403);
+                echo "Accès refusé : vous n'êtes pas l'entraîneur d'une des équipes de ce match.";
+                return;
+            }
+
+            $canEditDom = ((int)$match->idEquipeDom === (int)$coachEquipeId);
+            $canEditExt = ((int)$match->idEquipeExt === (int)$coachEquipeId);
         }
 
         $joueurModel = new \App\Models\JoueurModel($this->pdo);
