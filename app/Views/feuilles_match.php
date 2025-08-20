@@ -1,8 +1,10 @@
 <div class="feuille-main">
 	<div class="title-feuilles">
 		<h1 class="title">Feuilles de match</h1>
-		<a href="/matchs/create" class="create-btn">+ Créer une feuille de match</a>
-	</div>
+        <?php if ($_SESSION['user']['id_permission'] === 1): ?>
+		    <a href="/matchs/create" class="create-btn">+ Créer une feuille de match</a>
+        <?php endif; ?>
+        </div>
 	<div class="feuille-section">
 		<h2 class="section-title section-title-acompleter">À compléter</h2>
 		<div class="match-container">
@@ -52,7 +54,7 @@
                     <span class="location-name"><?= htmlspecialchars($match->lieu_nom) ?></span>
                 </div>
                 <div class="feuille-status badge-aconclure">À conclure</div>
-                <a href="conclure_feuille.php?id=<?= $match->id ?>" class="details-button">Conclure</a>
+                <a href="/matchs/selection?id=<?= $match->id ?>" class="details-button">Conclure</a>
             </div>
             <?php endforeach; ?>
 		</div>
@@ -80,7 +82,7 @@
                             <span class="location-name"><?= htmlspecialchars($match->lieu->nom ?? '') ?></span>
                         </div>
                         <div class="feuille-status badge-terminee">Terminée</div>
-                        <a href="match.php?id=<?= $match->id ?>" class="details-button">Voir la feuille</a>
+                        <a href="/matchs/view?id=<?= $match->id ?>" class="details-button">Voir la feuille</a>
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>

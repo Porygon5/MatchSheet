@@ -1,6 +1,6 @@
 <div class="feuille-main">
     <h1 class="title">Créer une feuille de match</h1>
-    <form class="feuille-form" action="/matchs/creer" method="POST" autocomplete="on">
+    <form class="feuille-form" action="/matchs/store" method="POST" autocomplete="on">
         <div class="form-row">
             <label for="date">Date du match</label>
             <input type="date" name="date" id="date" required>

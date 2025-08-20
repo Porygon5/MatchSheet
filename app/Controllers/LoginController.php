@@ -60,7 +60,7 @@ class LoginController
         }
 
         // Recherche de l’utilisateur
-        $user = $this->users->findByNomUtilisateur($login); // -> App\Entities\Utilisateur|null
+        $user = $this->users->findByNomUtilisateur($login);
         if (!$user || !$user->verifierMotDePasse($password)) {
             echo "Identifiants incorrects.";
             return;
@@ -73,7 +73,7 @@ class LoginController
             'id_permission'   => $user->idPermission(), // ex: 1=admin, 2=coach…
         ];
 
-        // Sécurité : regénèrer l’ID de session
+        // Regénérer l'ID de session
         session_regenerate_id(true);
 
         // Redirection après login

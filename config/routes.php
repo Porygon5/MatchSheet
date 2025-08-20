@@ -11,4 +11,5 @@ return [
     '/matchs/create' => ['controller' => 'FootballMatchController', 'method' => 'createForm'],
     '/matchs/store' => ['controller' => 'FootballMatchController', 'method' => 'store'],
     '/matchs/selection' => ['controller' => 'FootballMatchController', 'method' => 'selection'],
+    '/matchs/selection/submit' => ['controller' => 'FootballMatchController', 'method' => 'updateComposition'],
 ];
