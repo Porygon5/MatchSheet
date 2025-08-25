@@ -5,17 +5,20 @@ namespace App\Entities;
 final class Composition
 {
     private int $idEquipe;
+    private int $idMatch;
     private ?int $idCapitaine;
     private array $entries = [];
     private ?int $idSuppleant;
 
     public function __construct(
         int $idEquipe,
+        int $idMatch,
         ?int $idCapitaine = null,
         array $entries = [],
         ?int $idSuppleant = null
     ) {
         $this->idEquipe    = $idEquipe;
+        $this->idMatch     = $idMatch;
         $this->idCapitaine = $idCapitaine;
         $this->entries     = $entries;
         $this->idSuppleant = $idSuppleant;
@@ -25,6 +28,11 @@ final class Composition
     public function getIdEquipe(): int
     {
         return $this->idEquipe;
+    }
+
+    public function getIdMatch(): int
+    {
+        return $this->idMatch;
     }
 
     public function getIdCapitaine(): ?int
@@ -46,6 +54,12 @@ final class Composition
     public function setIdEquipe(int $idEquipe): self
     {
         $this->idEquipe = $idEquipe;
+        return $this;
+    }
+
+    public function setIdMatch(int $idMatch): self
+    {
+        $this->idMatch = $idMatch;
         return $this;
     }
 

@@ -19,6 +19,7 @@ class FootballMatch
     public int $idEquipeDom;
     public ?int $scoreEquipeDom = null;
     public ?int $idJoueurSelectionne = null;
+    public int $statut;
 
     public ?string $equipe_dom_nom = null;
     public ?string $equipe_ext_nom = null;
@@ -42,11 +43,12 @@ class FootballMatch
         $this->scoreEquipeExt = $data['score_equipe_ext'] ?? null;
         $this->idEquipeDom = $data['id_equipe_dom'];
         $this->scoreEquipeDom = $data['score_equipe_dom'] ?? null;
-        $this->idJoueurSelectionne = $data['id_joueur_selectionne'] ?? null;
 
         $this->equipe_dom_nom = $data['equipe_dom_nom'] ?? null;
         $this->equipe_ext_nom = $data['equipe_ext_nom'] ?? null;
         $this->lieu_nom = $data['lieu_nom'] ?? null;
+
+        $this->statut = $data['statut'];
 
         // Formatage de la date.
         $formatter = new IntlDateFormatter(

@@ -54,7 +54,7 @@
                     <span class="location-name"><?= htmlspecialchars($match->lieu_nom) ?></span>
                 </div>
                 <div class="feuille-status badge-aconclure">À conclure</div>
-                <a href="/matchs/selection?id=<?= $match->id ?>" class="details-button">Conclure</a>
+                <a href="/matchs/arbitrage?id=<?= $match->id ?>" class="details-button">Conclure</a>
             </div>
             <?php endforeach; ?>
 		</div>
@@ -69,7 +69,7 @@
                         <div class="match-teams">
                             <div class="team">
                                 <div class="team-icon"><?= htmlspecialchars($match->equipeDom->abreviation ?? '') ?></div>
-                                <span class="team-name"><?= htmlspecialchars($match->equipeDom->nom ?? '') ?></span>
+                                <span class="team-name"><?= htmlspecialchars($match->equipeDom->nom ?? '') . ' ' . $match->id ?></span>
                             </div>
                             <div class="vs-separator">VS</div>
                             <div class="team">

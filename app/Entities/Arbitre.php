@@ -11,7 +11,7 @@ class Arbitre
 
     public function __construct(array $data)
     {
-        $this->id = $data['id'] ?? 0;
+        $this->id = $data['id_arbitre'] ?? 0;
         $this->nom = $data['nom'] ?? '';
         $this->nationalite = $data['nationalite'] ?? '';
     }

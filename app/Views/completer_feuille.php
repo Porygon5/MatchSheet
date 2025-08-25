@@ -1,7 +1,7 @@
 <div class="feuille-main">
     <h1 class="title">Feuille de match</h1>
     
-    <form class="match-sheet-form" action="/matchs/selection/submit?id=<?= $match->id ?>" method="POST">
+    <form class="match-sheet-form" action="/matchs/selection/save?id=<?= $match->id ?>" method="POST">
         
         <!-- Équipe à domicile -->
         <?php if ($canEditDom): ?>
@@ -162,6 +162,7 @@
             </div>
         <?php endif; ?>
 
-        <button type="submit" class="submit-btn">Enregistrer la feuille de match</button>
+        <button type="submit" name="action" class="submit-btn" value="save">Enregistrer la feuille de match</button>
+        <button type="submit" name="action" class="submit-btn" value="submit_sheet">Soumettre la feuille de match</button>
     </form>
 </div>

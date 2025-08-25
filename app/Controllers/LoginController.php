@@ -18,7 +18,12 @@ class LoginController
         $this->users = new UtilisateurModel($pdo);
     }
 
-    /** GET /login */
+    /**
+     * Affiche le formulaire de connexion.
+     * Génère un token CSRF et inclut la vue de connexion dans le layout principal.
+     * 
+     * @return void
+     */
     public function showLoginForm()
     {
         // Génère un token CSRF simple
@@ -33,7 +38,13 @@ class LoginController
         require __DIR__ . '/../Views/layout.php';
     }
 
-    /** POST /login */
+    /**
+     * Traite la soumission du formulaire de connexion.
+     * Vérifie le token CSRF, valide les identifiants, authentifie l'utilisateur et crée la session.
+     * Redirige vers la page des matchs en cas de succès.
+     * 
+     * @return void
+     */
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -81,7 +92,12 @@ class LoginController
         exit;
     }
 
-    /** GET /logout */
+    /**
+     * Déconnecte l'utilisateur.
+     * Vide la session, supprime le cookie de session et redirige vers la page de connexion.
+     * 
+     * @return void
+     */
     public function logout()
     {
         $_SESSION = [];
