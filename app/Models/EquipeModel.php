@@ -52,7 +52,7 @@ class EquipeModel
      * Récupère une équipe par son ID
      * 
      * @param int $id ID de l'équipe
-     * @return Equipe[]|null L'équipe en cas de succès, null sinon
+     * @return Equipe|null L'équipe trouvée ou null si non trouvée
      */
     public function getById(int $id): ?array
     {

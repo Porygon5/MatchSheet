@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Entities\Joueur;
 use PDO;
 
+require_once __DIR__ . '/../Entities/Joueur.php';
+
 class JoueurModel
 {
     private PDO $pdo;

@@ -24,7 +24,6 @@ class FootballMatchModel
      * Pour chaque match, elle calcule dynamiquement :
      *   - Le nombre de joueurs sélectionnés pour le match.
      *   - Le nombre d'événements liés au match.
-     *   - Le statut du match (1 : créé, 2 : composition saisie, 3 : terminé).
      * Elle formate également la date du match en français, et ajoute des propriétés
      * supplémentaires (noms des équipes, lieu, abréviations, etc.) à l'objet FootballMatch.
      *
@@ -69,18 +68,6 @@ class FootballMatchModel
             ");
             $stmtE->execute([':id' => $row['id_match']]);
             $nb_evenements = (int)$stmtE->fetchColumn();
-
-            if (
-                $row['score_equipe_dom'] !== null ||
-                $row['score_equipe_ext'] !== null ||
-                $nb_evenements > 0
-            ) {
-                $row['statut'] = 3; // terminé
-            } elseif ($nb_joueurs_selectionnes > 0) {
-                $row['statut'] = 2; // compo saisie
-            } else {
-                $row['statut'] = 1; // juste créé
-            }
 
             $match = new FootballMatch($row);
 
@@ -213,18 +200,6 @@ class FootballMatchModel
         ");
         $stmtE->execute([':id' => $row['id_match']]);
         $nb_evenements = (int)$stmtE->fetchColumn();
-
-        if (
-            $row['score_equipe_dom'] !== null ||
-            $row['score_equipe_ext'] !== null ||
-            $nb_evenements > 0
-        ) {
-            $row['statut'] = 3; // terminé
-        } elseif ($nb_joueurs_selectionnes > 0) {
-            $row['statut'] = 2; // compo saisie
-        } else {
-            $row['statut'] = 1; // juste créé
-        }
 
         $match = new FootballMatch($row);
 

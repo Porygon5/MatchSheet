@@ -377,4 +377,90 @@ class FootballMatchController
 
         return [$compo, $vice];
     }
+
+    /**
+     * Affiche le formulaire d'arbitrage pour un match donné.
+     * Vérifie l'existence du match et prépare les variables pour la vue.
+     *
+     * @return void
+     */
+    public function arbitrageForm()
+    {
+        if (!isset($_GET['id'])) {
+            http_response_code(400);
+            echo "Paramètre 'id' manquant";
+            return;
+        }
+
+        $matchId = (int)$_GET['id'];
+        $match = $this->model->findById($matchId);
+        if (!$match) {
+            http_response_code(404);
+            echo "Match introuvable";
+            return;
+        }
+
+        // Joueurs des deux équipes
+        require_once __DIR__ . '/../Models/JoueurModel.php';
+        $joueurModel = new \App\Models\JoueurModel($this->pdo);
+        $joueursDom = $joueurModel->getByEquipe($match->idEquipeDom);
+        $joueursExt = $joueurModel->getByEquipe($match->idEquipeExt);
+
+        // Arbitrage existant (scores + événements)
+        require_once __DIR__ . '/../Models/ArbitrageModel.php';
+        require_once __DIR__ . '/../Entities/Arbitrage.php';
+        $arbitrageModel = new \App\Models\ArbitrageModel($this->pdo);
+        $arbitrage = $arbitrageModel->getByMatch($matchId);
+
+        $title = "Saisir l'arbitrage du match";
+        $pageCss = "/assets/pages/completer_feuille.css";
+        $view = __DIR__ . '/../Views/arbitrage.php';
+
+        require __DIR__ . '/../Views/layout.php';
+    }
+
+    /** POST /matchs/arbitrage/save?id={id_match} */
+    public function saveArbitrage()
+    {
+        $matchId = (int)($_GET['id'] ?? 0);
+        if ($matchId <= 0) {
+            header('Location: /matchs');
+            exit;
+        }
+
+        // Vérifier que le match existe.
+        $match = $this->model->findById($matchId);
+        if (!$match) {
+            header('Location: /matchs');
+            exit;
+        }
+
+        // Construire l'entité Arbitrage depuis le POST.
+        require_once __DIR__ . '/../Entities/Arbitrage.php';
+        $data = [
+            'id_match' => $matchId,
+            'score_dom' => $_POST['score_dom'] ?? null,
+            'score_ext' => $_POST['score_ext'] ?? null,
+            'temps_jeu' => $_POST['temps_jeu'] ?? null,
+            'buts_dom' => $_POST['buts_dom'] ?? [],
+            'buts_ext' => $_POST['buts_ext'] ?? [],
+            'cartons_dom' => $_POST['cartons_dom'] ?? [],
+            'cartons_ext' => $_POST['cartons_ext'] ?? [],
+        ];
+        $arbitrage = new \App\Entities\Arbitrage($data);
+
+        // Sauvegarde
+        require_once __DIR__ . '/../Models/ArbitrageModel.php';
+        $arbitrageModel = new \App\Models\ArbitrageModel($this->pdo);
+        $arbitrageModel->save($arbitrage);
+
+        $action = $_POST['action'] ?? 'save_officiating';
+        if ($action === 'close_match') {
+            $this->model->markSubmitted($matchId, 3);
+        }
+
+        // Retour à l'arbitrage.'
+        header('Location: /matchs/arbitrage?id=' . $matchId);
+        exit;
+    }
 }

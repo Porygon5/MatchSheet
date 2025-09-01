@@ -69,7 +69,7 @@
                         <div class="match-teams">
                             <div class="team">
                                 <div class="team-icon"><?= htmlspecialchars($match->equipeDom->abreviation ?? '') ?></div>
-                                <span class="team-name"><?= htmlspecialchars($match->equipeDom->nom ?? '') . ' ' . $match->id ?></span>
+                                <span class="team-name"><?= htmlspecialchars($match->equipeDom->nom ?? '') ?></span>
                             </div>
                             <div class="vs-separator">VS</div>
                             <div class="team">

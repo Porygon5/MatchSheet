@@ -12,4 +12,6 @@ return [
     '/matchs/store' => ['controller' => 'FootballMatchController', 'method' => 'store'],
     '/matchs/selection' => ['controller' => 'FootballMatchController', 'method' => 'selection'],
     '/matchs/selection/save' => ['controller' => 'FootballMatchController', 'method' => 'updateComposition'],
+    '/matchs/arbitrage' => ['controller' => 'FootballMatchController', 'method' => 'arbitrageForm'],
+    '/matchs/arbitrage/save' => ['controller' => 'FootballMatchController', 'method' => 'saveArbitrage'],
 ];

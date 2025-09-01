@@ -84,7 +84,7 @@
 
 .player-checkbox label {
     color: var(--dark-text);
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1em;
     cursor: pointer;
     margin: 0;
@@ -159,8 +159,8 @@
     color: var(--white-text);
     border: none;
     border-radius: var(--border-radius);
-    padding: 15px 0;
-    font-size: 1.1em;
+    padding: 10px 0;
+    font-size: 0.95em;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.19);
@@ -211,4 +211,66 @@
         grid-template-columns: 1fr;
         gap: 15px;
     }
+}
+
+/* --- Inputs d'arbitrage (style isolé) --- */
+.arb-input,
+.arb-select {
+	width: 100%;
+	padding: 8px 10px;
+	border-radius: 10px;
+	border: 1px solid var(--light-gray-bg);
+	background: #fff;
+	color: var(--dark-text);
+	font-size: .95rem;
+	transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.arb-input:focus,
+.arb-select:focus {
+	outline: none;
+	border-color: var(--primary-red);
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+	background: #fff;
+}
+
+/* Variante compacte (pour les lignes “minute / points” etc.) */
+.arb-input--sm,
+.arb-select--sm {
+	padding: 6px 9px;
+	font-size: .9rem;
+	border-radius: 8px;
+}
+
+/* Bouton fantôme “Supprimer” dans les lignes */
+.arb-btn-ghost {
+	border: 1px dashed var(--light-gray-bg);
+	background: #fff;
+	color: var(--dark-text);
+	border-radius: 10px;
+	padding: 6px 10px;
+	font-size: .9rem;
+	cursor: pointer;
+	transition: border-color .2s, color .2s, background .2s;
+	white-space: nowrap;
+}
+
+.arb-btn-ghost:hover {
+	border-color: var(--primary-red);
+	color: var(--primary-red);
+	background: #fff5f5;
+}
+
+/* Groupes d’inputs denses dans .player-selects */
+.player-selects .arb-input,
+.player-selects .arb-select {
+	flex: 1;
+	min-width: 120px;
+}
+
+/* Supprime les flèches “grosses” sur number (look plus propre) */
+.arb-input[type="number"]::-webkit-outer-spin-button,
+.arb-input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }

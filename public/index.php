@@ -1,6 +1,5 @@
 <?php
 // public/index.php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -15,13 +14,28 @@ $routes = require_once __DIR__ . '/../config/routes.php';
 $uri = $_SERVER['REQUEST_URI'];
 $scriptName = dirname($_SERVER['SCRIPT_NAME']);
 $uri = str_replace($scriptName, '', $uri);
-$uri = strtok($uri, '?'); // Supprime les paramètres GET
-$uri = rtrim($uri, '/');  // Supprime le slash final
-$uri = $uri === '' || $uri === '/index.php' ? '/' : $uri;
+$uri = strtok($uri, '?'); // supprime GET
+$uri = '/' . trim($uri, '/'); // s'assure que ça commence par /
 
-// Debug si besoin
-// echo "URI résolue : $uri"; exit;
+// Pages accessibles sans connexion
+$publicPages = ['/', '/login', '/accueil'];
+$isLoggedIn = isset($_SESSION['user']);
 
+// Vérification de session
+$allowed = false;
+foreach ($publicPages as $page) {
+    if ($uri === $page || str_starts_with($uri, $page . '/')) {
+        $allowed = true;
+        break;
+    }
+}
+
+if (!$isLoggedIn && !$allowed) {
+    header('Location: /login');
+    exit;
+}
+
+// Vérifie que la route existe
 if (isset($routes[$uri])) {
     $controllerName = $routes[$uri]['controller'];
     $methodName = $routes[$uri]['method'];

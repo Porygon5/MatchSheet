@@ -10,12 +10,13 @@ $isLoggedIn = isset($_SESSION['user']);
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<base href="/" />
 		<title>MatchSheet</title>
+		<link rel="stylesheet" href="/MatchSheet/public/assets/components/header.css" />
 	</head>
 	<body>
 		<header class="header">
 			<div class="logo-section">
 				<div class="logo">
-					<img src="/assets/images/logo.png" alt="Logo FFF" class="logo-img" />
+					<img src="/MatchSheet/public/assets/images/logo.png" alt="Logo FFF" class="logo-img" />
 				</div>
 				<h1 class="brand-name">MatchSheet</h1>
 			</div>
@@ -30,9 +31,6 @@ $isLoggedIn = isset($_SESSION['user']);
 					</li>
 					<li>
 						<a href="/matchs" class="nav-link <?= $currentPage === 'matchs' ? 'active' : '' ?>">Matchs</a>
-					</li>
-					<li>
-            <a href="/classement" class="nav-link <?= $currentPage === 'classement' ? 'active' : '' ?>">Classement</a>
 					</li>
 				</ul>
 				<?php if ($isLoggedIn): ?>
@@ -59,9 +57,6 @@ $isLoggedIn = isset($_SESSION['user']);
 				</li>
 				<li>
 					<a href="/matchs" class="nav-link <?= $currentPage === 'matchs' ? 'active' : '' ?>" onclick="closeMobileMenu()">Matchs </a>
-				</li>
-				<li>
-					<a href="/classement" class="nav-link <?= $currentPage === 'classement' ? 'active' : '' ?>" onclick="closeMobileMenu()">Classement </a>
 				</li>
 			</ul>
 			<?php if ($isLoggedIn): ?>
