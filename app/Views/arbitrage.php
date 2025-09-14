@@ -68,8 +68,6 @@
 									</option>
 								<?php endforeach; ?>
 							</select>
-							<input type="number" min="1" name="buts_dom[<?= (int)$i ?>][points]" placeholder="Points (ex: 1)"
-								   class="arb-input arb-input--sm" value="<?= isset($but['points']) ? (int)$but['points'] : 1 ?>">
 							<button type="button" class="remove-row arb-btn-ghost">Supprimer</button>
 						</div>
 					</div>
@@ -87,7 +85,6 @@
 								<option value="<?= (int)$j->id ?>"><?= htmlspecialchars($j->nom) ?></option>
 							<?php endforeach; ?>
 						</select>
-						<input type="number" min="1" name="buts_dom[__i__][points]" placeholder="Points (ex: 1)" class="arb-input arb-input--sm">
 						<button type="button" class="remove-row arb-btn-ghost">Supprimer</button>
 					</div>
 				</div>
@@ -114,8 +111,6 @@
 									</option>
 								<?php endforeach; ?>
 							</select>
-							<input type="number" min="1" name="buts_ext[<?= (int)$i ?>][points]" placeholder="Points (ex: 1)"
-								   class="arb-input arb-input--sm" value="<?= isset($but['points']) ? (int)$but['points'] : 1 ?>">
 							<button type="button" class="remove-row arb-btn-ghost">Supprimer</button>
 						</div>
 					</div>
@@ -133,7 +128,6 @@
 								<option value="<?= (int)$j->id ?>"><?= htmlspecialchars($j->nom) ?></option>
 							<?php endforeach; ?>
 						</select>
-						<input type="number" min="1" name="buts_ext[__i__][points]" placeholder="Points (ex: 1)" class="arb-input arb-input--sm">
 						<button type="button" class="remove-row arb-btn-ghost">Supprimer</button>
 					</div>
 				</div>
@@ -248,7 +242,7 @@
 			<button type="button" class="submit-btn" data-add="#cartons_ext" data-kind="cartons" data-side="ext">+ Ajouter un carton (ext.)</button>
 		</div>
 
-		<button type="submit" name="action" class="submit-btn" value="save_officiating">Enregistrer l’arbitrage</button>
+		<button type="submit" name="action" class="submit-btn" value="save_officiating" >Enregistrer l’arbitrage</button>
 		<button type="submit" name="action" class="submit-btn" value="close_match">Clore le match</button>
 	</form>
 </div>

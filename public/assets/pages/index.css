@@ -33,3 +33,10 @@
         display: none;
     }
 }
+
+.no-matches {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    margin: 1rem 0;
+}

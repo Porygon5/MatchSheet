@@ -7,11 +7,12 @@ return [
     '/login/submit' => ['controller' => 'LoginController', 'method' => 'login'],
     '/logout' => ['controller' => 'LoginController', 'method' => 'logout'],
     '/matchs' => ['controller' => 'FootballMatchController', 'method' => 'index'],
-    '/matchs/view' => ['controller' => 'FootballMatchController', 'method' => 'view'],
+    '/matchs/view' => ['controller' => 'FootballMatchController', 'method' => 'detailView'],
     '/matchs/create' => ['controller' => 'FootballMatchController', 'method' => 'createForm'],
     '/matchs/store' => ['controller' => 'FootballMatchController', 'method' => 'store'],
     '/matchs/selection' => ['controller' => 'FootballMatchController', 'method' => 'selection'],
     '/matchs/selection/save' => ['controller' => 'FootballMatchController', 'method' => 'updateComposition'],
     '/matchs/arbitrage' => ['controller' => 'FootballMatchController', 'method' => 'arbitrageForm'],
     '/matchs/arbitrage/save' => ['controller' => 'FootballMatchController', 'method' => 'saveArbitrage'],
+    '/joueurs' => ['controller' => 'CrudController', 'method' => 'index'],
 ];

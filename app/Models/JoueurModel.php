@@ -51,4 +51,31 @@ class JoueurModel
         $row = $stmt->fetch();
         return $row ? new Joueur($row) : null;
     }
+
+    /**
+     * Transfère un joueur d'une équipe à une autre.
+     */
+    public function transfer(int $idJoueur, int $idEquipeCible): void
+    {
+        // Trouver l'équipe source actuelle du joueur
+        $stmt = $this->pdo->prepare("SELECT id_equipe FROM joueurs WHERE id_joueur = :id_joueur");
+        $stmt->execute([':id_joueur' => $idJoueur]);
+        $idEquipeSource = $stmt->fetchColumn();
+
+        if (!$idEquipeSource) {
+            // Joueur non trouvé, rien à faire
+            return;
+        }
+
+        // Met à jour l'équipe du joueur dans la table des joueurs
+        $stmt = $this->pdo->prepare("
+            UPDATE joueurs
+            SET id_equipe = :id_equipe_cible
+            WHERE id_joueur = :id_joueur
+        ");
+        $stmt->execute([
+            ':id_joueur' => $idJoueur,
+            ':id_equipe_cible' => $idEquipeCible
+        ]);
+    }
 }

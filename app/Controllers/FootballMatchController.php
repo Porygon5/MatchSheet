@@ -39,6 +39,7 @@ class FootballMatchController
      */
     public function index()
     {
+        
         // Récupère tous les matchs enrichis
         $matchs = $this->model->getAll();
 
@@ -410,7 +411,24 @@ class FootballMatchController
         require_once __DIR__ . '/../Models/ArbitrageModel.php';
         require_once __DIR__ . '/../Entities/Arbitrage.php';
         $arbitrageModel = new \App\Models\ArbitrageModel($this->pdo);
-        $arbitrage = $arbitrageModel->getByMatch($matchId);
+        
+        try {
+            $arbitrage = $arbitrageModel->getByMatch($matchId);
+        } catch (\Exception $e) {
+            // Si le match n'a pas encore d'arbitrage, créer un arbitrage vide
+            $arbitrage = new \App\Entities\Arbitrage([
+                'id_match' => $matchId,
+                'score_dom' => null,
+                'score_ext' => null,
+                'temps_jeu' => null,
+                'buts_dom' => [],
+                'buts_ext' => [],
+                'cartons_dom' => [],
+                'cartons_ext' => [],
+                'id_equipe_dom' => $match->idEquipeDom,
+                'id_equipe_ext' => $match->idEquipeExt,
+            ]);
+        }
 
         $title = "Saisir l'arbitrage du match";
         $pageCss = "/assets/pages/completer_feuille.css";
@@ -435,32 +453,201 @@ class FootballMatchController
             exit;
         }
 
+        // Traitement des données POST pour les événements
+        $butsDom = [];
+        if (isset($_POST['buts_dom']) && is_array($_POST['buts_dom'])) {
+            foreach ($_POST['buts_dom'] as $but) {
+                if (isset($but['joueur_id'], $but['minute']) && 
+                    $but['joueur_id'] !== '' && $but['minute'] !== '') {
+                    $butsDom[] = [
+                        'joueur_id' => (int)$but['joueur_id'],
+                        'minute' => (int)$but['minute']
+                    ];
+                }
+            }
+        }
+
+        $butsExt = [];
+        if (isset($_POST['buts_ext']) && is_array($_POST['buts_ext'])) {
+            foreach ($_POST['buts_ext'] as $but) {
+                if (isset($but['joueur_id'], $but['minute']) && 
+                    $but['joueur_id'] !== '' && $but['minute'] !== '') {
+                    $butsExt[] = [
+                        'joueur_id' => (int)$but['joueur_id'],
+                        'minute' => (int)$but['minute']
+                    ];
+                }
+            }
+        }
+
+        $cartonsDom = [];
+        if (isset($_POST['cartons_dom']) && is_array($_POST['cartons_dom'])) {
+            foreach ($_POST['cartons_dom'] as $carton) {
+                if (isset($carton['joueur_id'], $carton['minute'], $carton['type']) && 
+                    $carton['joueur_id'] !== '' && $carton['minute'] !== '' && $carton['type'] !== '') {
+                    $cartonsDom[] = [
+                        'joueur_id' => (int)$carton['joueur_id'],
+                        'minute' => (int)$carton['minute'],
+                        'type' => $carton['type']
+                    ];
+                }
+            }
+        }
+
+        $cartonsExt = [];
+        if (isset($_POST['cartons_ext']) && is_array($_POST['cartons_ext'])) {
+            foreach ($_POST['cartons_ext'] as $carton) {
+                if (isset($carton['joueur_id'], $carton['minute'], $carton['type']) && 
+                    $carton['joueur_id'] !== '' && $carton['minute'] !== '' && $carton['type'] !== '') {
+                    $cartonsExt[] = [
+                        'joueur_id' => (int)$carton['joueur_id'],
+                        'minute' => (int)$carton['minute'],
+                        'type' => $carton['type']
+                    ];
+                }
+            }
+        }
+
         // Construire l'entité Arbitrage depuis le POST.
         require_once __DIR__ . '/../Entities/Arbitrage.php';
         $data = [
             'id_match' => $matchId,
-            'score_dom' => $_POST['score_dom'] ?? null,
-            'score_ext' => $_POST['score_ext'] ?? null,
-            'temps_jeu' => $_POST['temps_jeu'] ?? null,
-            'buts_dom' => $_POST['buts_dom'] ?? [],
-            'buts_ext' => $_POST['buts_ext'] ?? [],
-            'cartons_dom' => $_POST['cartons_dom'] ?? [],
-            'cartons_ext' => $_POST['cartons_ext'] ?? [],
+            'score_dom' => isset($_POST['score_dom']) && $_POST['score_dom'] !== '' ? (int)$_POST['score_dom'] : null,
+            'score_ext' => isset($_POST['score_ext']) && $_POST['score_ext'] !== '' ? (int)$_POST['score_ext'] : null,
+            'temps_jeu' => isset($_POST['temps_jeu']) && $_POST['temps_jeu'] !== '' ? (int)$_POST['temps_jeu'] : null,
+            'buts_dom' => $butsDom,
+            'buts_ext' => $butsExt,
+            'cartons_dom' => $cartonsDom,
+            'cartons_ext' => $cartonsExt,
+            'id_equipe_dom' => $match->idEquipeDom,
+            'id_equipe_ext' => $match->idEquipeExt,
         ];
         $arbitrage = new \App\Entities\Arbitrage($data);
 
         // Sauvegarde
         require_once __DIR__ . '/../Models/ArbitrageModel.php';
         $arbitrageModel = new \App\Models\ArbitrageModel($this->pdo);
-        $arbitrageModel->save($arbitrage);
 
+        $arbitrageModel->save($arbitrage);
+        
         $action = $_POST['action'] ?? 'save_officiating';
         if ($action === 'close_match') {
             $this->model->markSubmitted($matchId, 3);
+            $arbitrageModel->markFinished($matchId);
+            header('Location: /matchs/');
+            exit;
         }
 
-        // Retour à l'arbitrage.'
+        // Retour à l'arbitrage
         header('Location: /matchs/arbitrage?id=' . $matchId);
         exit;
+    }
+
+    public function detailView()
+    {
+        if (!isset($_GET['id'])) {
+            http_response_code(400);
+            echo "Paramètre 'id' manquant";
+            return;
+        }
+
+        $matchId = (int)$_GET['id'];
+        $match = $this->model->findById($matchId);
+        
+        if (!$match) {
+            http_response_code(404);
+            echo "Match introuvable";
+            return;
+        }
+
+        // Récupérer l'arbitrage (scores + événements)
+        require_once __DIR__ . '/../Models/ArbitrageModel.php';
+        require_once __DIR__ . '/../Entities/Arbitrage.php';
+        $arbitrageModel = new \App\Models\ArbitrageModel($this->pdo);
+        $arbitrage = $arbitrageModel->getByMatch($matchId);
+
+        // Récupérer les joueurs des deux équipes pour avoir leurs noms
+        require_once __DIR__ . '/../Models/JoueurModel.php';
+        $joueurModel = new \App\Models\JoueurModel($this->pdo);
+        $joueursDom = $joueurModel->getByEquipe($match->idEquipeDom);
+        $joueursExt = $joueurModel->getByEquipe($match->idEquipeExt);
+
+        // Créer des maps pour faciliter la recherche des noms
+        $joueursMapDom = [];
+        foreach ($joueursDom as $joueur) {
+            $joueursMapDom[$joueur->id] = $joueur;
+        }
+        
+        $joueursMapExt = [];
+        foreach ($joueursExt as $joueur) {
+            $joueursMapExt[$joueur->id] = $joueur;
+        }
+
+        // Créer une timeline unifiée des événements
+        $timelineEvents = [];
+        
+        // Ajouter les buts domicile
+        foreach ($arbitrage->butsDom as $but) {
+            $joueur = $joueursMapDom[$but['joueur_id']] ?? null;
+            $timelineEvents[] = [
+                'minute' => $but['minute'],
+                'type' => 'but',
+                'equipe' => 'dom',
+                'joueur' => $joueur,
+                'data' => $but
+            ];
+        }
+        
+        // Ajouter les buts extérieur
+        foreach ($arbitrage->butsExt as $but) {
+            $joueur = $joueursMapExt[$but['joueur_id']] ?? null;
+            $timelineEvents[] = [
+                'minute' => $but['minute'],
+                'type' => 'but',
+                'equipe' => 'ext',
+                'joueur' => $joueur,
+                'data' => $but
+            ];
+        }
+        
+        // Ajouter les cartons domicile
+        foreach ($arbitrage->cartonsDom as $carton) {
+            $joueur = $joueursMapDom[$carton['joueur_id']] ?? null;
+            $timelineEvents[] = [
+                'minute' => $carton['minute'],
+                'type' => 'carton_' . $carton['type'],
+                'equipe' => 'dom',
+                'joueur' => $joueur,
+                'data' => $carton
+            ];
+        }
+        
+        // Ajouter les cartons extérieur
+        foreach ($arbitrage->cartonsExt as $carton) {
+            $joueur = $joueursMapExt[$carton['joueur_id']] ?? null;
+            $timelineEvents[] = [
+                'minute' => $carton['minute'],
+                'type' => 'carton_' . $carton['type'],
+                'equipe' => 'ext',
+                'joueur' => $joueur,
+                'data' => $carton
+            ];
+        }
+        
+        // Trier les événements par minute
+        usort($timelineEvents, function($a, $b) {
+            return $a['minute'] <=> $b['minute'];
+        });
+
+        $eventsMobile = $timelineEvents;
+        usort($eventsMobile, function($a, $b) {
+            return $a['minute'] <=> $b['minute'];
+        });
+
+        $title = "Détails du match - " . htmlspecialchars($match->equipeDom->nom) . " vs " . htmlspecialchars($match->equipeExt->nom);
+        $pageCss = "/assets/pages/detail.css";
+        $view = __DIR__ . '/../Views/detail.php';
+
+        require __DIR__ . '/../Views/layout.php';
     }
 }

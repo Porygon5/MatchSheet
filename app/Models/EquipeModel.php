@@ -54,11 +54,11 @@ class EquipeModel
      * @param int $id ID de l'équipe
      * @return Equipe|null L'équipe trouvée ou null si non trouvée
      */
-    public function getById(int $id): ?array
+    public function getById(int $id): ?Equipe
     {
         $sql = "SELECT * FROM equipes WHERE id_equipe = :id";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch();
 
@@ -73,16 +73,5 @@ class EquipeModel
             $row['id_club'],
             $row['id_entraineur'],
         );
-    }
-
-    /**
-     * Retourne l'ID de l'équipe dont $userId est l'entraîneur
-     */
-    public function findTeamByCoachId( int $userId ) {
-        $sql = "SELECT id_equipe FROM equipes WHERE id_entraineur = :id LIMIT 1";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id' => $userId]);
-        $row = $stmt->fetch();
-        return $row ? (int) $row['id_equipe'] : null;
     }
 }

@@ -62,7 +62,7 @@
 	<div class="feuille-section">
 		<h2 class="section-title section-title-terminee">Terminées</h2>
 		<div class="match-container">
-			<?php foreach ($matchs as $match) : ?>
+			<?php foreach ($matchsTermines as $match) : ?>
                 <?php if ($match->scoreEquipeDom !== null && $match->scoreEquipeExt !== null) : ?>
                     <div class="match-card feuille-card-terminee">
                         <div class="match-header"><?= $match->dateFormatee ?></div>
