@@ -33,26 +33,45 @@
     <?php if (!empty($timelineEvents)): ?>
         <div class="timeline">
             <div class="timeline-container">
-                <?php foreach ($timelineEvents as $event): 
+                <?php foreach ($timelineEvents as $event):
                     $sideClass = $event['equipe'] === 'dom' ? 'left' : 'right';
                     $teamName = $event['equipe'] === 'dom' ? $match->equipeDom->nom : $match->equipeExt->nom;
                 ?>
-                    <div class="timeline-event <?= $sideClass ?> <?= $event['type'] === 'but' ? 'goal' : ($event['type'] === 'carton_jaune' ? 'yellow-card' : 'red-card') ?>">
-                        <div class="event-time"><?= $event['minute'] ?>'</div>
-                        <div class="event-type">
-                            <?php
-                            if ($event['type'] === 'but') echo "But - " . htmlspecialchars($teamName);
-                            elseif ($event['type'] === 'carton_jaune') echo "Carton jaune - " . htmlspecialchars($teamName);
-                            elseif ($event['type'] === 'carton_rouge') echo "Carton rouge - " . htmlspecialchars($teamName);
-                            ?>
+                    <?php if ($event['type'] === 'but'): ?>
+                        <div class="timeline-event <?= $sideClass ?> goal">
+                            <div class="event-time"><?= $event['minute'] ?>'</div>
+                            <div class="event-type">But - <?= htmlspecialchars($teamName) ?></div>
+                            <div class="event-player">
+                                <?= $event['joueur'] ? htmlspecialchars($event['joueur']->prenom . ' ' . $event['joueur']->nom) : 'Joueur inconnu' ?>
+                            </div>
                         </div>
-                        <div class="event-player">
-                            <?= $event['joueur'] ? htmlspecialchars($event['joueur']->prenom . ' ' . $event['joueur']->nom) : 'Joueur inconnu' ?>
-                            <?php if (str_starts_with($event['type'], 'carton')): ?>
+
+                    <?php elseif (str_starts_with($event['type'], 'carton')): ?>
+                        <div class="timeline-event <?= $sideClass ?> <?= $event['type'] === 'carton_jaune' ? 'yellow-card' : 'red-card' ?>">
+                            <div class="event-time"><?= $event['minute'] ?>'</div>
+                            <div class="event-type">
+                                <?= $event['type'] === 'carton_jaune' ? 'Carton jaune' : 'Carton rouge' ?> - <?= htmlspecialchars($teamName) ?>
+                            </div>
+                            <div class="event-player">
+                                <?= $event['joueur'] ? htmlspecialchars($event['joueur']->prenom . ' ' . $event['joueur']->nom) : 'Joueur inconnu' ?>
                                 reçoit un <?= $event['type'] === 'carton_jaune' ? 'carton jaune' : 'carton rouge' ?>
-                            <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
+
+                    <?php elseif ($event['type'] === 'sub'): ?>
+                        <div class="timeline-event <?= $sideClass ?> substitution">
+                            <div class="event-time"><?= $event['minute'] ?>'</div>
+                            <div class="event-type">Remplacement - <?= htmlspecialchars($teamName) ?></div>
+                            <div class="substitution-details">
+                                <div class="substitution-out">
+                                    Sortie : <?= $event['joueur_out'] ? htmlspecialchars($event['joueur_out']->prenom . ' ' . $event['joueur_out']->nom) : 'Joueur inconnu' ?>
+                                </div>
+                                <div class="substitution-in">
+                                    Entrée : <?= $event['joueur_in'] ? htmlspecialchars($event['joueur_in']->prenom . ' ' . $event['joueur_in']->nom) : 'Joueur inconnu' ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -68,7 +87,7 @@
 </div>
 
 <script>
-    document.getElementById("printBtn").addEventListener("click", function () {
+    document.getElementById("printBtn").addEventListener("click", function() {
         window.print();
     });
 </script>

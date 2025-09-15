@@ -683,6 +683,33 @@ class FootballMatchController
             ];
         }
 
+        // Remplacements domicile
+        foreach ($arbitrage->subsDom as $sub) {
+            $timelineEvents[] = [
+                'minute' => $sub['minute'],
+                'type'   => 'sub',
+                'equipe' => 'dom',
+                'joueur_out' => $joueursMapDom[$sub['out']] ?? null,
+                'joueur_in'  => $joueursMapDom[$sub['in']] ?? null
+            ];
+        }
+
+        // Remplacements extérieur
+        foreach ($arbitrage->subsExt as $sub) {
+            $timelineEvents[] = [
+                'minute' => $sub['minute'],
+                'type'   => 'sub',
+                'equipe' => 'ext',
+                'joueur_out' => $joueursMapExt[$sub['out']] ?? null,
+                'joueur_in'  => $joueursMapExt[$sub['in']] ?? null
+            ];
+        }
+
+        // echo("<pre>");
+        // print_r($arbitrage);
+        // echo("</pre>");
+        // exit;
+
         // Trier les événements par minute
         usort($timelineEvents, function ($a, $b) {
             return $a['minute'] <=> $b['minute'];
