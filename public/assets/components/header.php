@@ -27,7 +27,7 @@ $isLoggedIn = isset($_SESSION['user']);
             <a href="/" class="nav-link <?= empty($currentPage) ? 'active' : '' ?>">Accueil</a>
 					</li>
 					<li>
-            <a href="/equipes" class="nav-link <?= $currentPage === 'equipes' ? 'active' : '' ?>">Équipes</a>
+            <a href="/joueurs" class="nav-link <?= $currentPage === 'joueurs' ? 'active' : '' ?>">Gestion des joueurs</a>
 					</li>
 					<li>
 						<a href="/matchs" class="nav-link <?= $currentPage === 'matchs' ? 'active' : '' ?>">Matchs</a>
@@ -53,7 +53,7 @@ $isLoggedIn = isset($_SESSION['user']);
 					<a href="/" class="nav-link <?= $currentPage === 'accueil' ? 'active' : '' ?>" onclick="closeMobileMenu()">Accueil </a>
 				</li>
 				<li>
-					<a href="/equipes" class="nav-link <?= $currentPage === 'equipes' ? 'active' : '' ?>" onclick="closeMobileMenu()">Équipes </a>
+					<a href="/joueurs" class="nav-link <?= $currentPage === 'joueurs' ? 'active' : '' ?>" onclick="closeMobileMenu()">Gestion des joueurs </a>
 				</li>
 				<li>
 					<a href="/matchs" class="nav-link <?= $currentPage === 'matchs' ? 'active' : '' ?>" onclick="closeMobileMenu()">Matchs </a>

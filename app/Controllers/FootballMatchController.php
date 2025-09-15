@@ -331,15 +331,12 @@ class FootballMatchController
     }
 
     /**
-     * Construit une instance de Composition à partir des données POST pour une équipe donnée.
-     * Récupère les titulaires, remplaçants, poste et placement depuis les données POST.
-     * Gère également le capitaine et le vice-capitaine.
-     * Retourne un tableau contenant l'objet Composition et l'ID du vice-capitaine.
+     * Construit la composition d'une équipe depuis le formulaire
      * 
-     * @param string $side 'dom' ou 'ext' pour indiquer l'équipe concernée.
-     * @param int $idEquipe ID de l'équipe.
-     * @param int $idMatch ID du match.
-     * @return array [Composition, ?int] L'objet Composition et l'ID du vice-capitaine (ou null).
+     * @param string $side 'dom' ou 'ext'
+     * @param int $idEquipe 
+     * @param int $idMatch 
+     * @return array [Composition, vice_capitaine_id]
      */
     private function buildCompositionFromPost(string $side, int $idEquipe, int $idMatch): array
     {
@@ -705,18 +702,8 @@ class FootballMatchController
             ];
         }
 
-        // echo("<pre>");
-        // print_r($arbitrage);
-        // echo("</pre>");
-        // exit;
-
         // Trier les événements par minute
         usort($timelineEvents, function ($a, $b) {
-            return $a['minute'] <=> $b['minute'];
-        });
-
-        $eventsMobile = $timelineEvents;
-        usort($eventsMobile, function ($a, $b) {
             return $a['minute'] <=> $b['minute'];
         });
 
