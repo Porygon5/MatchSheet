@@ -12,6 +12,9 @@
                     TERMINÉ <?= $arbitrage->scoreDom ?? 0 ?> - <?= $arbitrage->scoreExt ?? 0 ?>
                 <?php endif; ?>
             </div>
+            <button id="printBtn" class="print-button">
+                Imprimer la feuille
+            </button>
             <div class="team">
                 <div class="team-name"><?= htmlspecialchars($match->equipeExt->nom) ?></div>
                 <div class="team-icon">
@@ -30,15 +33,7 @@
     <?php if (!empty($timelineEvents)): ?>
         <div class="timeline">
             <div class="timeline-container">
-                <?php
-                $currentMinute = 0;
-                $halfTimeShown = false;
-
-                foreach ($timelineEvents as $event):
-
-                    $currentMinute = $event['minute'];
-
-                    // Déterminer la classe pour domicile/extérieur
+                <?php foreach ($timelineEvents as $event): 
                     $sideClass = $event['equipe'] === 'dom' ? 'left' : 'right';
                     $teamName = $event['equipe'] === 'dom' ? $match->equipeDom->nom : $match->equipeExt->nom;
                 ?>
@@ -71,3 +66,9 @@
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    document.getElementById("printBtn").addEventListener("click", function () {
+        window.print();
+    });
+</script>

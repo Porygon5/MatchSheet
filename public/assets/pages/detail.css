@@ -31,8 +31,10 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: transparent; /* fond transparent */
-    border: 2px solid #FFFFFF; /* cercle fin blanc */
+    background-color: transparent;
+    /* fond transparent */
+    border: 2px solid #FFFFFF;
+    /* cercle fin blanc */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,8 +44,8 @@
 }
 
 .team:last-child {
-            justify-content: flex-end;
-        }
+    justify-content: flex-end;
+}
 
 .team-name {
     font-size: 18px;
@@ -194,31 +196,184 @@
 /* Container 2 colonnes desktop, 1 colonne mobile */
 .timeline-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 colonnes desktop */
-    gap: 0;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
 }
 
 /* Timeline événement */
 .timeline-event.left {
+    grid-column: 1; /* Force dans la colonne de gauche */
     border-left: 3px solid #d81b22;
+    border-right: none;
+    text-align: left;
 }
 
 .timeline-event.right {
+    grid-column: 2; /* Force dans la colonne de droite */
     border-right: 3px solid #d81b22;
+    border-left: none;
     text-align: right;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
     .timeline-container {
-        grid-template-columns: 1fr; /* 1 colonne mobile */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
 
     .timeline-event.left,
     .timeline-event.right {
-        border-left: 3px solid #d81b22; /* tout à gauche */
+        grid-column: 1; /* Tout dans une colonne sur mobile */
+        border-left: 3px solid #d81b22;
         border-right: none;
         text-align: left;
+    }
+}
+
+.print-button {
+    background: #d81b22;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.print-button:hover {
+    background: #b91c1c;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 8mm; /* Marges réduites */
+    }
+
+    /* On masque ce qui ne doit pas apparaître */
+    header,
+    nav,
+    footer,
+    .actions,
+    .print-button {
+        display: none !important;
+    }
+
+    /* Fond et couleurs forcés */
+    body,
+    .result-container {
+        background: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* FORCER TOUT SUR UNE PAGE */
+    .result-container {
+        height: 100vh; /* Hauteur de la page */
+        display: flex;
+        flex-direction: column;
+        page-break-inside: avoid;
+        page-break-after: avoid;
+    }
+
+    /* Header plus compact */
+    .match-header {
+        padding: 15px 20px; /* Moins de padding */
+        flex-shrink: 0;
+    }
+
+    .teams-display {
+        margin-bottom: 10px; /* Moins d'espace */
+    }
+
+    .team-name {
+        font-size: 16px; /* Plus petit */
+    }
+
+    .data-status {
+        font-size: 10px;
+    }
+
+    /* Timeline adaptative */
+    .timeline {
+        flex: 1; /* Prend l'espace restant */
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .timeline-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    /* Événements plus compacts */
+    .timeline-event {
+        margin-bottom: 10px; /* Moins d'espace entre événements */
+        padding: 8px 12px; /* Padding réduit */
+        background: #f8f9fa;
+        border-radius: 4px;
+        font-size: 11px; /* Police plus petite */
+        page-break-inside: avoid;
+    }
+
+    .event-time {
+        font-size: 10px;
+        padding: 2px 6px;
+        margin-bottom: 5px;
+    }
+
+    .event-type {
+        font-size: 9px;
+        margin-bottom: 3px;
+    }
+
+    .event-player {
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    /* Réduction globale uniquement si beaucoup d'événements */
+    body {
+        zoom: 0.9; /* Légère réduction pour tout faire tenir */
+    }
+
+    /* Supprime les espaces inutiles */
+    .empty-space,
+    .half-separator {
+        margin: 10px 0; /* Réduit les marges */
+    }
+
+    .half-separator::after {
+        font-size: 8px;
+    }
+
+    /* Message si aucun événement */
+    .no-events {
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+        padding: 20px;
+    }
+
+    .timeline-event.left {
+        grid-column: 1;
+        border-left: 3px solid #d81b22;
+        border-right: none;
+        text-align: left;
+    }
+
+    .timeline-event.right {
+        grid-column: 2;
+        border-right: 3px solid #d81b22;
+        border-left: none;
+        text-align: right;
     }
 }

@@ -21,7 +21,7 @@ final class ArbitrageModel
      * Sauvegarde l'arbitrage d'un match :
      * - met à jour les scores si fournis,
      * - supprime les événements existants,
-     * - insère buts et cartons (liés à un id_joueur_selectionne).
+     * - insère buts, cartons et remplacements (liés à un id_joueur_selectionne).
      */
     public function save(Arbitrage $arbitrage): void
     {
@@ -43,11 +43,11 @@ final class ArbitrageModel
 
         // Suppression des événements liés au match (et des liens joueurs)
         $this->pdo->prepare("
-            DELETE FROM l_evenements_joueurs
-            WHERE id_evenement_match IN (
-                SELECT id_evenement_match FROM evenements_match WHERE id_match = :match
-            )
-        ")->execute([':match' => $arbitrage->idMatch]);
+        DELETE FROM l_evenements_joueurs
+        WHERE id_evenement_match IN (
+            SELECT id_evenement_match FROM evenements_match WHERE id_match = :match
+        )
+    ")->execute([':match' => $arbitrage->idMatch]);
 
         $this->pdo->prepare("DELETE FROM evenements_match WHERE id_match = :match")
             ->execute([':match' => $arbitrage->idMatch]);
@@ -62,55 +62,57 @@ final class ArbitrageModel
         $typeBut = $this->resolveTypeIdByLabel('But');
         $typeCartonJaune = $this->resolveTypeIdByLabel('Carton jaune');
         $typeCartonRouge = $this->resolveTypeIdByLabel('Carton rouge');
+        $typeRemplacement = $this->resolveTypeIdByLabel('Remplacement');
 
         // Vérification que les types existent
-        if ($typeBut === null || $typeCartonJaune === null || $typeCartonRouge === null) {
+        if ($typeBut === null || $typeCartonJaune === null || $typeCartonRouge === null || $typeRemplacement === null) {
             throw new \Exception("Types d'événements manquants dans la base de données");
         }
 
         // Préparation des requêtes d'insertion
         $insertEvenement = $this->pdo->prepare("
-            INSERT INTO evenements_match (id_type_evenement, minute, id_match)
-            VALUES (:type, :minute, :match)
-        ");
+        INSERT INTO evenements_match (id_type_evenement, minute, id_match)
+        VALUES (:type, :minute, :match)
+    ");
 
         $insertLien = $this->pdo->prepare("
-            INSERT INTO l_evenements_joueurs (id_evenement_match, id_joueur_selectionne)
-            VALUES (:evenement, :id_js)
-        ");
-        
+        INSERT INTO l_evenements_joueurs (id_evenement_match, id_joueur_selectionne, role)
+        VALUES (:evenement, :id_js, :role)
+    ");
+
         // Requête pour résoudre l'id_joueur_selectionne en fonction du match
         $resolveJoueurSelectionneId = $this->pdo->prepare("
-            SELECT js.id_joueur_selectionne 
-            FROM joueurs_selectionnes js
-            INNER JOIN l_joueurs_selectionnes_matchs ljm ON ljm.id_joueur_selectionne = js.id_joueur_selectionne
-            WHERE js.id_joueur = :id_joueur
-            AND js.id_equipe = :id_equipe 
-            AND ljm.id_match = :id_match
-            LIMIT 1
-        ");
+        SELECT js.id_joueur_selectionne 
+        FROM joueurs_selectionnes js
+        INNER JOIN l_joueurs_selectionnes_matchs ljm ON ljm.id_joueur_selectionne = js.id_joueur_selectionne
+        WHERE js.id_joueur = :id_joueur
+        AND js.id_equipe = :id_equipe 
+        AND ljm.id_match = :id_match
+        LIMIT 1
+    ");
 
         // Buts domicile
         foreach ($arbitrage->butsDom as $but) {
             if (isset($but['joueur_id']) && $but['joueur_id'] !== null && $but['joueur_id'] !== '') {
                 $resolveJoueurSelectionneId->execute([
-                    ':id_joueur' => (int)$but['joueur_id'], 
+                    ':id_joueur' => (int)$but['joueur_id'],
                     ':id_equipe' => $arbitrage->idEquipeDom,
                     ':id_match'  => $arbitrage->idMatch
                 ]);
 
                 $idJoueurSelectionne = $resolveJoueurSelectionneId->fetchColumn();
-                
+
                 if ($idJoueurSelectionne) {
                     $insertEvenement->execute([
-                        ':type' => $typeBut, 
-                        ':minute' => (int)$but['minute'], 
+                        ':type' => $typeBut,
+                        ':minute' => (int)$but['minute'],
                         ':match' => $arbitrage->idMatch
                     ]);
                     $evenementId = (int)$this->pdo->lastInsertId();
                     $insertLien->execute([
-                        ':evenement' => $evenementId, 
-                        ':id_js' => (int)$idJoueurSelectionne
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSelectionne,
+                        ':role' => 'entrant'
                     ]);
                 }
             }
@@ -120,7 +122,7 @@ final class ArbitrageModel
         foreach ($arbitrage->butsExt as $but) {
             if (isset($but['joueur_id']) && $but['joueur_id'] !== null && $but['joueur_id'] !== '') {
                 $resolveJoueurSelectionneId->execute([
-                    ':id_joueur' => (int)$but['joueur_id'], 
+                    ':id_joueur' => (int)$but['joueur_id'],
                     ':id_equipe' => $arbitrage->idEquipeExt,
                     ':id_match' => $arbitrage->idMatch
                 ]);
@@ -128,14 +130,15 @@ final class ArbitrageModel
 
                 if ($idJoueurSelectionne) {
                     $insertEvenement->execute([
-                        ':type' => $typeBut, 
-                        ':minute' => (int)$but['minute'], 
+                        ':type' => $typeBut,
+                        ':minute' => (int)$but['minute'],
                         ':match' => $arbitrage->idMatch
                     ]);
                     $evenementId = (int)$this->pdo->lastInsertId();
                     $insertLien->execute([
-                        ':evenement' => $evenementId, 
-                        ':id_js' => (int)$idJoueurSelectionne
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSelectionne,
+                        ':role' => 'entrant'
                     ]);
                 }
             }
@@ -145,7 +148,7 @@ final class ArbitrageModel
         foreach ($arbitrage->cartonsDom as $carton) {
             if (isset($carton['joueur_id']) && $carton['joueur_id'] !== null && $carton['joueur_id'] !== '') {
                 $resolveJoueurSelectionneId->execute([
-                    ':id_joueur' => (int)$carton['joueur_id'], 
+                    ':id_joueur' => (int)$carton['joueur_id'],
                     ':id_equipe' => $arbitrage->idEquipeDom,
                     ':id_match' => $arbitrage->idMatch
                 ]);
@@ -154,14 +157,15 @@ final class ArbitrageModel
                 if ($idJoueurSelectionne) {
                     $typeCarton = (strtolower($carton['type']) === 'rouge') ? $typeCartonRouge : $typeCartonJaune;
                     $insertEvenement->execute([
-                        ':type' => $typeCarton, 
-                        ':minute' => (int)$carton['minute'], 
+                        ':type' => $typeCarton,
+                        ':minute' => (int)$carton['minute'],
                         ':match' => $arbitrage->idMatch
                     ]);
                     $evenementId = (int)$this->pdo->lastInsertId();
                     $insertLien->execute([
-                        ':evenement' => $evenementId, 
-                        ':id_js' => (int)$idJoueurSelectionne
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSelectionne,
+                        ':role' => 'entrant'
                     ]);
                 }
             }
@@ -171,23 +175,124 @@ final class ArbitrageModel
         foreach ($arbitrage->cartonsExt as $carton) {
             if (isset($carton['joueur_id']) && $carton['joueur_id'] !== null && $carton['joueur_id'] !== '') {
                 $resolveJoueurSelectionneId->execute([
-                    ':id_joueur' => (int)$carton['joueur_id'], 
+                    ':id_joueur' => (int)$carton['joueur_id'],
                     ':id_equipe' => $arbitrage->idEquipeExt,
                     ':id_match' => $arbitrage->idMatch
                 ]);
                 $idJoueurSelectionne = $resolveJoueurSelectionneId->fetchColumn();
-                
+
                 if ($idJoueurSelectionne) {
                     $typeCarton = (strtolower($carton['type']) === 'rouge') ? $typeCartonRouge : $typeCartonJaune;
                     $insertEvenement->execute([
-                        ':type' => $typeCarton, 
-                        ':minute' => (int)$carton['minute'], 
+                        ':type' => $typeCarton,
+                        ':minute' => (int)$carton['minute'],
                         ':match' => $arbitrage->idMatch
                     ]);
                     $evenementId = (int)$this->pdo->lastInsertId();
                     $insertLien->execute([
-                        ':evenement' => $evenementId, 
-                        ':id_js' => (int)$idJoueurSelectionne
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSelectionne,
+                        ':role' => 'entrant'
+                    ]);
+                }
+            }
+        }
+
+        // Remplacements domicile
+        foreach ($arbitrage->subsDom as $remplacement) {
+            if (
+                isset($remplacement['out'], $remplacement['in'])
+                && $remplacement['out'] !== null && $remplacement['in'] !== null
+                && $remplacement['out'] !== '' && $remplacement['in'] !== ''
+            ) {
+
+                // Résoudre l'ID du joueur sortant
+                $resolveJoueurSelectionneId->execute([
+                    ':id_joueur' => (int)$remplacement['out'],
+                    ':id_equipe' => $arbitrage->idEquipeDom,
+                    ':id_match' => $arbitrage->idMatch
+                ]);
+                $idJoueurSortant = $resolveJoueurSelectionneId->fetchColumn();
+
+                // Résoudre l'ID du joueur entrant
+                $resolveJoueurSelectionneId->execute([
+                    ':id_joueur' => (int)$remplacement['in'],
+                    ':id_equipe' => $arbitrage->idEquipeDom,
+                    ':id_match' => $arbitrage->idMatch
+                ]);
+                $idJoueurEntrant = $resolveJoueurSelectionneId->fetchColumn();
+
+                if ($idJoueurSortant && $idJoueurEntrant) {
+                    // Créer l'événement de remplacement
+                    $insertEvenement->execute([
+                        ':type' => $typeRemplacement,
+                        ':minute' => (int)$remplacement['minute'],
+                        ':match' => $arbitrage->idMatch
+                    ]);
+                    $evenementId = (int)$this->pdo->lastInsertId();
+
+                    // Lier le joueur sortant
+                    $insertLien->execute([
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSortant,
+                        ':role' => 'sortant'
+                    ]);
+
+                    // Lier le joueur entrant
+                    $insertLien->execute([
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurEntrant,
+                        ':role' => 'entrant'
+                    ]);
+                }
+            }
+        }
+
+        // Remplacements extérieur
+        foreach ($arbitrage->subsExt as $remplacement) {
+            if (
+                isset($remplacement['out'], $remplacement['in'])
+                && $remplacement['out'] !== null && $remplacement['in'] !== null
+                && $remplacement['out'] !== '' && $remplacement['in'] !== ''
+            ) {
+
+                // Résoudre l'ID du joueur sortant
+                $resolveJoueurSelectionneId->execute([
+                    ':id_joueur' => (int)$remplacement['out'],
+                    ':id_equipe' => $arbitrage->idEquipeExt,
+                    ':id_match' => $arbitrage->idMatch
+                ]);
+                $idJoueurSortant = $resolveJoueurSelectionneId->fetchColumn();
+
+                // Résoudre l'ID du joueur entrant
+                $resolveJoueurSelectionneId->execute([
+                    ':id_joueur' => (int)$remplacement['in'],
+                    ':id_equipe' => $arbitrage->idEquipeExt,
+                    ':id_match' => $arbitrage->idMatch
+                ]);
+                $idJoueurEntrant = $resolveJoueurSelectionneId->fetchColumn();
+
+                if ($idJoueurSortant && $idJoueurEntrant) {
+                    // Créer l'événement de remplacement
+                    $insertEvenement->execute([
+                        ':type' => $typeRemplacement,
+                        ':minute' => (int)$remplacement['minute'],
+                        ':match' => $arbitrage->idMatch
+                    ]);
+                    $evenementId = (int)$this->pdo->lastInsertId();
+
+                    // Lier le joueur sortant
+                    $insertLien->execute([
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurSortant,
+                        ':role' => 'sortant'
+                    ]);
+
+                    // Lier le joueur entrant
+                    $insertLien->execute([
+                        ':evenement' => $evenementId,
+                        ':id_js' => (int)$idJoueurEntrant,
+                        ':role' => 'entrant'
                     ]);
                 }
             }
@@ -201,19 +306,19 @@ final class ArbitrageModel
     {
         // Récupération des informations de base du match
         $stmtScores = $this->pdo->prepare("
-            SELECT 
-                score_equipe_dom AS score_dom, 
-                score_equipe_ext AS score_ext,
-                duree,
-                id_equipe_dom,
-                id_equipe_ext
-            FROM matchs
-            WHERE id_match = :match
-            LIMIT 1
-        ");
+        SELECT 
+            score_equipe_dom AS score_dom, 
+            score_equipe_ext AS score_ext,
+            duree,
+            id_equipe_dom,
+            id_equipe_ext
+        FROM matchs
+        WHERE id_match = :match
+        LIMIT 1
+    ");
         $stmtScores->execute([':match' => $matchId]);
         $scores = $stmtScores->fetch();
-        
+
         if (!$scores) {
             throw new \Exception("Match non trouvé : ID $matchId");
         }
@@ -227,43 +332,52 @@ final class ArbitrageModel
             'buts_ext'      => [],
             'cartons_dom'   => [],
             'cartons_ext'   => [],
+            'subs_dom'      => [],
+            'subs_ext'      => [],
             'id_equipe_dom' => (int)$scores['id_equipe_dom'],
             'id_equipe_ext' => (int)$scores['id_equipe_ext'],
         ];
 
         $idEquipeDom = (int)$scores['id_equipe_dom'];
         $idEquipeExt = (int)$scores['id_equipe_ext'];
-        
+
         // Événements + lien joueur sélectionné
         $stmt = $this->pdo->prepare("
-            SELECT 
-                em.id_evenement_match,
-                em.minute,
-                te.nom AS type_nom,
-                js.id_joueur_selectionne,
-                js.id_equipe,
-                j.id_joueur,
-                j.nom,
-                j.prenom
-            FROM evenements_match em
-            JOIN types_evenement te ON te.id_type_evenement = em.id_type_evenement
-            LEFT JOIN l_evenements_joueurs lej ON lej.id_evenement_match = em.id_evenement_match
-            LEFT JOIN joueurs_selectionnes js ON js.id_joueur_selectionne = lej.id_joueur_selectionne
-            LEFT JOIN joueurs j ON j.id_joueur = js.id_joueur
-            WHERE em.id_match = :match
-            ORDER BY em.minute ASC, em.id_evenement_match ASC
-        ");
+        SELECT 
+            em.id_evenement_match,
+            em.minute,
+            te.nom AS type_nom,
+            js.id_joueur_selectionne,
+            js.id_equipe,
+            j.id_joueur,
+            j.nom,
+            j.prenom,
+            lej.role
+        FROM evenements_match em
+        JOIN types_evenement te ON te.id_type_evenement = em.id_type_evenement
+        LEFT JOIN l_evenements_joueurs lej ON lej.id_evenement_match = em.id_evenement_match
+        LEFT JOIN joueurs_selectionnes js ON js.id_joueur_selectionne = lej.id_joueur_selectionne
+        LEFT JOIN joueurs j ON j.id_joueur = js.id_joueur
+        WHERE em.id_match = :match
+        ORDER BY em.minute ASC, em.id_evenement_match ASC
+    ");
         $stmt->execute([':match' => $matchId]);
+
+        // Tableau temporaire pour grouper les remplacements par minute
+        $remplacements = [];
 
         while ($row = $stmt->fetch()) {
             $typeNom        = strtolower(trim((string)$row['type_nom']));
             $minute         = (int)$row['minute'];
             $idJoueur       = $row['id_joueur'] !== null ? (int)$row['id_joueur'] : null;
             $idEquipeJoueur = $row['id_equipe'] !== null ? (int)$row['id_equipe'] : null;
+            $roleJoueur     = $row['role'] ?? null;
+            $idEvenement    = (int)$row['id_evenement_match'];
 
-            $isBut   = ($typeNom === 'but');
-            $isJaune = ($typeNom === 'carton jaune');
-            $isRouge = ($typeNom === 'carton rouge');
+            $isBut          = ($typeNom === 'but');
+            $isJaune        = ($typeNom === 'carton jaune');
+            $isRouge        = ($typeNom === 'carton rouge');
+            $isRemplacement = ($typeNom === 'remplacement');
 
             if ($idJoueur && $idEquipeJoueur) {
                 if ($isBut) {
@@ -290,6 +404,42 @@ final class ArbitrageModel
                     } elseif ($idEquipeJoueur === $idEquipeExt) {
                         $data['cartons_ext'][] = $carton;
                     }
+                } elseif ($isRemplacement && $roleJoueur) {
+                    // Grouper les remplacements par événement, équipe et minute
+                    $key = "{$idEquipeJoueur}_{$idEvenement}_{$minute}";
+
+                    if (!isset($remplacements[$key])) {
+                        $remplacements[$key] = [
+                            'minute' => $minute,
+                            'equipe' => $idEquipeJoueur,
+                            'out' => null,
+                            'in' => null
+                        ];
+                    }
+
+                    if ($roleJoueur === 'sortant') {
+                        $remplacements[$key]['out'] = $idJoueur;
+                    } elseif ($roleJoueur === 'entrant') {
+                        $remplacements[$key]['in'] = $idJoueur;
+                    }
+                }
+            }
+        }
+
+        // Traitement des remplacements groupés
+        foreach ($remplacements as $remplacement) {
+            // Vérifier que nous avons bien un joueur entrant et sortant
+            if ($remplacement['out'] && $remplacement['in']) {
+                $sub = [
+                    'minute' => $remplacement['minute'],
+                    'out'    => $remplacement['out'],
+                    'in'     => $remplacement['in']
+                ];
+
+                if ($remplacement['equipe'] === $idEquipeDom) {
+                    $data['subs_dom'][] = $sub;
+                } elseif ($remplacement['equipe'] === $idEquipeExt) {
+                    $data['subs_ext'][] = $sub;
                 }
             }
         }
@@ -297,28 +447,21 @@ final class ArbitrageModel
         return new Arbitrage($data);
     }
 
+    /**
+     * Résout l'ID d'un type d'événement par son nom/label
+     */
+    private function resolveTypeIdByLabel(string $label): ?int
+    {
+        $stmt = $this->pdo->prepare("SELECT id_type_evenement FROM types_evenement WHERE nom = :label LIMIT 1");
+        $stmt->execute([':label' => $label]);
+        $result = $stmt->fetchColumn();
+        return $result ? (int)$result : null;
+    }
+
     /** Passe le match en statut "terminé". */
     public function markFinished(int $matchId): void
     {
         $this->pdo->prepare("UPDATE matchs SET statut = 3 WHERE id_match = :match")
             ->execute([':match' => $matchId]);
-    }
-
-    /**
-     * Résout l'ID d'un type d'événement à partir de son libellé.
-     * Retourne null si le type n'existe pas.
-     */
-    private function resolveTypeIdByLabel(string $label): ?int
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT id_type_evenement
-            FROM types_evenement
-            WHERE nom = :nom
-            LIMIT 1
-        ");
-        $stmt->execute([':nom' => $label]);
-        $id = $stmt->fetchColumn();
-
-        return $id !== false ? (int)$id : null;
     }
 }

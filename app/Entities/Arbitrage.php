@@ -19,6 +19,10 @@ final class Arbitrage
     /** Durée de jeu en minutes (null si non saisie) */
     public ?int $tempsJeu = null;
 
+    /** Remplacements */
+    public array $subsDom = [];
+    public array $subsExt = [];
+
     /**
      * Liste des buts côté domicile.
      * @var array<int, array{joueur_id:int, minute:int}>
@@ -77,6 +81,8 @@ final class Arbitrage
         // Affectation buts et cartons
         $this->butsDom    = $data['buts_dom'] ?? [];
         $this->butsExt    = $data['buts_ext'] ?? [];
+        $this->subsDom    = $data['subs_dom'] ?? [];
+        $this->subsExt    = $data['subs_ext'] ?? [];
         $this->cartonsDom = $data['cartons_dom'] ?? [];
         $this->cartonsExt = $data['cartons_ext'] ?? [];
     }
