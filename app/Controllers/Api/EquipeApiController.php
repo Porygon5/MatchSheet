@@ -154,67 +154,97 @@ class EquipeApiController
      */
     private function getEquipeStatsSaison($equipeId)
     {
-        // Matchs joués
-        $sql = "
+        try {
+            // Matchs joués - Version corrigée avec des paramètres uniques
+            $sql = "
             SELECT 
                 COUNT(*) AS matchs_joues,
                 SUM(CASE 
-                    WHEN (id_equipe_dom = :equipe_id AND score_equipe_dom > score_equipe_ext) 
-                      OR (id_equipe_ext = :equipe_id AND score_equipe_ext > score_equipe_dom) 
+                    WHEN (id_equipe_dom = :equipe_id_1 AND score_equipe_dom > score_equipe_ext) 
+                      OR (id_equipe_ext = :equipe_id_2 AND score_equipe_ext > score_equipe_dom) 
                     THEN 1 ELSE 0 END) AS matchs_gagnes,
                 SUM(CASE 
-                    WHEN (id_equipe_dom = :equipe_id AND score_equipe_dom < score_equipe_ext) 
-                      OR (id_equipe_ext = :equipe_id AND score_equipe_ext < score_equipe_dom) 
+                    WHEN (id_equipe_dom = :equipe_id_3 AND score_equipe_dom < score_equipe_ext) 
+                      OR (id_equipe_ext = :equipe_id_4 AND score_equipe_ext < score_equipe_dom) 
                     THEN 1 ELSE 0 END) AS matchs_perdus,
                 SUM(CASE 
                     WHEN score_equipe_dom = score_equipe_ext AND score_equipe_dom IS NOT NULL
                     THEN 1 ELSE 0 END) AS matchs_nuls
             FROM matchs 
-            WHERE (id_equipe_dom = :equipe_id OR id_equipe_ext = :equipe_id)
+            WHERE (id_equipe_dom = :equipe_id_5 OR id_equipe_ext = :equipe_id_6)
             AND statut = 3 
             AND score_equipe_dom IS NOT NULL 
             AND score_equipe_ext IS NOT NULL
         ";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['equipe_id' => $equipeId]);
-        $matchStats = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                'equipe_id_1' => $equipeId,
+                'equipe_id_2' => $equipeId,
+                'equipe_id_3' => $equipeId,
+                'equipe_id_4' => $equipeId,
+                'equipe_id_5' => $equipeId,
+                'equipe_id_6' => $equipeId
+            ]);
 
-        // Points marqués et encaissés
-        $sql = "
+            if (!$result) {
+                throw new Exception("Erreur lors de l'exécution de la requête matchs: " . print_r($stmt->errorInfo(), true));
+            }
+
+            $matchStats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Points marqués et encaissés - Version corrigée
+            $sql = "
             SELECT 
-                SUM(CASE WHEN id_equipe_dom = :equipe_id THEN COALESCE(score_equipe_dom, 0) ELSE COALESCE(score_equipe_ext, 0) END) AS points_marques,
-                SUM(CASE WHEN id_equipe_dom = :equipe_id THEN COALESCE(score_equipe_ext, 0) ELSE COALESCE(score_equipe_dom, 0) END) AS points_encaisses
+                SUM(CASE WHEN id_equipe_dom = :equipe_id_1 THEN COALESCE(score_equipe_dom, 0) ELSE COALESCE(score_equipe_ext, 0) END) AS points_marques,
+                SUM(CASE WHEN id_equipe_dom = :equipe_id_2 THEN COALESCE(score_equipe_ext, 0) ELSE COALESCE(score_equipe_dom, 0) END) AS points_encaisses
             FROM matchs 
-            WHERE (id_equipe_dom = :equipe_id OR id_equipe_ext = :equipe_id)
+            WHERE (id_equipe_dom = :equipe_id_3 OR id_equipe_ext = :equipe_id_4)
             AND statut = 3 
             AND score_equipe_dom IS NOT NULL 
             AND score_equipe_ext IS NOT NULL
         ";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['equipe_id' => $equipeId]);
-        $pointStats = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                'equipe_id_1' => $equipeId,
+                'equipe_id_2' => $equipeId,
+                'equipe_id_3' => $equipeId,
+                'equipe_id_4' => $equipeId
+            ]);
 
-        // Cartons reçus
-        $cartons = $this->getCartonsEquipe($equipeId);
+            if (!$result) {
+                throw new Exception("Erreur lors de l'exécution de la requête points: " . print_r($stmt->errorInfo(), true));
+            }
 
-        $matchsJoues = (int)$matchStats['matchs_joues'];
-        $matchsGagnes = (int)$matchStats['matchs_gagnes'];
-        $matchsPerdus = (int)$matchStats['matchs_perdus'];
-        $matchsNuls = (int)$matchStats['matchs_nuls'];
+            $pointStats = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return [
-            'matchs_joues' => $matchsJoues,
-            'matchs_gagnes' => $matchsGagnes,
-            'matchs_perdus' => $matchsPerdus,
-            'matchs_nuls' => $matchsNuls,
-            'pourcentage_victoires' => $matchsJoues > 0 ? round(($matchsGagnes / $matchsJoues) * 100, 1) : 0,
-            'points_marques' => (int)($pointStats['points_marques'] ?? 0),
-            'points_encaisses' => (int)($pointStats['points_encaisses'] ?? 0),
-            'cartons_jaunes' => $cartons['jaunes'],
-            'cartons_rouges' => $cartons['rouges']
-        ];
+            // Cartons reçus
+            $cartons = $this->getCartonsEquipe($equipeId);
+
+            $matchsJoues = (int)$matchStats['matchs_joues'];
+            $matchsGagnes = (int)$matchStats['matchs_gagnes'];
+            $matchsPerdus = (int)$matchStats['matchs_perdus'];
+            $matchsNuls = (int)$matchStats['matchs_nuls'];
+
+            return [
+                'matchs_joues' => $matchsJoues,
+                'matchs_gagnes' => $matchsGagnes,
+                'matchs_perdus' => $matchsPerdus,
+                'matchs_nuls' => $matchsNuls,
+                'pourcentage_victoires' => $matchsJoues > 0 ? round(($matchsGagnes / $matchsJoues) * 100, 1) : 0,
+                'points_marques' => (int)($pointStats['points_marques'] ?? 0),
+                'points_encaisses' => (int)($pointStats['points_encaisses'] ?? 0),
+                'cartons_jaunes' => $cartons['jaunes'],
+                'cartons_rouges' => $cartons['rouges']
+            ];
+        } catch (PDOException $e) {
+            error_log("Erreur PDO dans getEquipeStatsSaison: " . $e->getMessage());
+            throw $e;
+        } catch (Exception $e) {
+            error_log("Erreur générale dans getEquipeStatsSaison: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -237,7 +267,7 @@ class EquipeApiController
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['equipe_id' => $equipeId]);
-        
+
         $cartons = ['jaunes' => 0, 'rouges' => 0];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if ($row['type_carton'] === 'Carton jaune') {
@@ -273,7 +303,7 @@ class EquipeApiController
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['equipe_id' => $equipeId]);
-        
+
         $joueurs = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $joueurs[] = [
@@ -316,7 +346,7 @@ class EquipeApiController
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['equipe_id' => $equipeId]);
-        
+
         $buteurs = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $buteurs[] = [
@@ -336,62 +366,78 @@ class EquipeApiController
      */
     private function getMatchsRemarkables($equipeId)
     {
-        // Meilleure victoire (plus gros écart)
+        // Meilleure victoire (plus gros écart) - Version corrigée avec paramètres uniques
         $sql = "
-            SELECT 
-                m.id_match,
-                m.date_heure,
-                CASE WHEN m.id_equipe_dom = :equipe_id THEN ed.nom ELSE ee.nom END AS equipe_adverse,
-                CASE WHEN m.id_equipe_dom = :equipe_id 
-                     THEN (m.score_equipe_dom - m.score_equipe_ext)
-                     ELSE (m.score_equipe_ext - m.score_equipe_dom) END AS ecart,
-                CASE WHEN m.id_equipe_dom = :equipe_id 
-                     THEN CONCAT(m.score_equipe_dom, '-', m.score_equipe_ext)
-                     ELSE CONCAT(m.score_equipe_ext, '-', m.score_equipe_dom) END AS score
-            FROM matchs m
-            LEFT JOIN equipes ed ON m.id_equipe_dom = ed.id_equipe
-            LEFT JOIN equipes ee ON m.id_equipe_ext = ee.id_equipe
-            WHERE (m.id_equipe_dom = :equipe_id OR m.id_equipe_ext = :equipe_id)
-            AND m.statut = 3
-            AND m.score_equipe_dom IS NOT NULL
-            AND m.score_equipe_ext IS NOT NULL
-            AND ((m.id_equipe_dom = :equipe_id AND m.score_equipe_dom > m.score_equipe_ext)
-                 OR (m.id_equipe_ext = :equipe_id AND m.score_equipe_ext > m.score_equipe_dom))
-            ORDER BY ecart DESC
-            LIMIT 1
-        ";
+        SELECT 
+            m.id_match,
+            m.date_heure,
+            CASE WHEN m.id_equipe_dom = :equipe_id_1 THEN ed.nom ELSE ee.nom END AS equipe_adverse,
+            CASE WHEN m.id_equipe_dom = :equipe_id_2 
+                 THEN (m.score_equipe_dom - m.score_equipe_ext)
+                 ELSE (m.score_equipe_ext - m.score_equipe_dom) END AS ecart,
+            CASE WHEN m.id_equipe_dom = :equipe_id_3 
+                 THEN CONCAT(m.score_equipe_dom, '-', m.score_equipe_ext)
+                 ELSE CONCAT(m.score_equipe_ext, '-', m.score_equipe_dom) END AS score
+        FROM matchs m
+        LEFT JOIN equipes ed ON m.id_equipe_dom = ed.id_equipe
+        LEFT JOIN equipes ee ON m.id_equipe_ext = ee.id_equipe
+        WHERE (m.id_equipe_dom = :equipe_id_4 OR m.id_equipe_ext = :equipe_id_5)
+        AND m.statut = 3
+        AND m.score_equipe_dom IS NOT NULL
+        AND m.score_equipe_ext IS NOT NULL
+        AND ((m.id_equipe_dom = :equipe_id_6 AND m.score_equipe_dom > m.score_equipe_ext)
+             OR (m.id_equipe_ext = :equipe_id_7 AND m.score_equipe_ext > m.score_equipe_dom))
+        ORDER BY ecart DESC
+        LIMIT 1
+    ";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['equipe_id' => $equipeId]);
+        $stmt->execute([
+            'equipe_id_1' => $equipeId,
+            'equipe_id_2' => $equipeId,
+            'equipe_id_3' => $equipeId,
+            'equipe_id_4' => $equipeId,
+            'equipe_id_5' => $equipeId,
+            'equipe_id_6' => $equipeId,
+            'equipe_id_7' => $equipeId
+        ]);
         $meilleureVictoire = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Pire défaite (plus gros écart négatif)
+        // Pire défaite (plus gros écart négatif) - Version corrigée avec paramètres uniques
         $sql = "
-            SELECT 
-                m.id_match,
-                m.date_heure,
-                CASE WHEN m.id_equipe_dom = :equipe_id THEN ed.nom ELSE ee.nom END AS equipe_adverse,
-                CASE WHEN m.id_equipe_dom = :equipe_id 
-                     THEN (m.score_equipe_ext - m.score_equipe_dom)
-                     ELSE (m.score_equipe_dom - m.score_equipe_ext) END AS ecart,
-                CASE WHEN m.id_equipe_dom = :equipe_id 
-                     THEN CONCAT(m.score_equipe_dom, '-', m.score_equipe_ext)
-                     ELSE CONCAT(m.score_equipe_ext, '-', m.score_equipe_dom) END AS score
-            FROM matchs m
-            LEFT JOIN equipes ed ON m.id_equipe_dom = ed.id_equipe
-            LEFT JOIN equipes ee ON m.id_equipe_ext = ee.id_equipe
-            WHERE (m.id_equipe_dom = :equipe_id OR m.id_equipe_ext = :equipe_id)
-            AND m.statut = 3
-            AND m.score_equipe_dom IS NOT NULL
-            AND m.score_equipe_ext IS NOT NULL
-            AND ((m.id_equipe_dom = :equipe_id AND m.score_equipe_dom < m.score_equipe_ext)
-                 OR (m.id_equipe_ext = :equipe_id AND m.score_equipe_ext < m.score_equipe_dom))
-            ORDER BY ecart DESC
-            LIMIT 1
-        ";
+        SELECT 
+            m.id_match,
+            m.date_heure,
+            CASE WHEN m.id_equipe_dom = :equipe_id_1 THEN ed.nom ELSE ee.nom END AS equipe_adverse,
+            CASE WHEN m.id_equipe_dom = :equipe_id_2 
+                 THEN (m.score_equipe_ext - m.score_equipe_dom)
+                 ELSE (m.score_equipe_dom - m.score_equipe_ext) END AS ecart,
+            CASE WHEN m.id_equipe_dom = :equipe_id_3 
+                 THEN CONCAT(m.score_equipe_dom, '-', m.score_equipe_ext)
+                 ELSE CONCAT(m.score_equipe_ext, '-', m.score_equipe_dom) END AS score
+        FROM matchs m
+        LEFT JOIN equipes ed ON m.id_equipe_dom = ed.id_equipe
+        LEFT JOIN equipes ee ON m.id_equipe_ext = ee.id_equipe
+        WHERE (m.id_equipe_dom = :equipe_id_4 OR m.id_equipe_ext = :equipe_id_5)
+        AND m.statut = 3
+        AND m.score_equipe_dom IS NOT NULL
+        AND m.score_equipe_ext IS NOT NULL
+        AND ((m.id_equipe_dom = :equipe_id_6 AND m.score_equipe_dom < m.score_equipe_ext)
+             OR (m.id_equipe_ext = :equipe_id_7 AND m.score_equipe_ext < m.score_equipe_dom))
+        ORDER BY ecart DESC
+        LIMIT 1
+    ";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['equipe_id' => $equipeId]);
+        $stmt->execute([
+            'equipe_id_1' => $equipeId,
+            'equipe_id_2' => $equipeId,
+            'equipe_id_3' => $equipeId,
+            'equipe_id_4' => $equipeId,
+            'equipe_id_5' => $equipeId,
+            'equipe_id_6' => $equipeId,
+            'equipe_id_7' => $equipeId
+        ]);
         $pireDefaite = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return [
