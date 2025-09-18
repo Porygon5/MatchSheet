@@ -23,6 +23,11 @@ return [
     
     // Gestion des clubs (admin seulement)
     '/joueurs/club/add' => ['controller' => 'CrudController', 'method' => 'addClub'],
+
+    // Gestion des utilisateurs (admin seulement)
+    '/joueurs/utilisateur/add' => ['controller' => 'CrudController', 'method' => 'addUtilisateur'],
+    '/joueurs/utilisateur/edit' => ['controller' => 'CrudController', 'method' => 'editUtilisateur'],
+    '/joueurs/utilisateur/delete' => ['controller' => 'CrudController', 'method' => 'deleteUtilisateur'],
     
     // Gestion des joueurs
     '/joueurs/add' => ['controller' => 'CrudController', 'method' => 'addJoueur'],

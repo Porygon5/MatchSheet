@@ -2,6 +2,76 @@
 <div class="crud-main">
     <h1 class="title">Gestion des équipes et joueurs</h1>
     
+    <!-- Section Utilisateurs (Admin seulement) -->
+    <?php if ($isAdmin): ?>
+    <div class="crud-section">
+        <div class="section-header">
+            <h2>Utilisateurs</h2>
+            <button onclick="toggleForm('utilisateur-form')" class="btn-primary">+ Créer un utilisateur</button>
+        </div>
+        
+        <!-- Formulaire d'ajout utilisateur -->
+        <div id="utilisateur-form" class="form-container" style="display: none;">
+            <h3>Nouvel utilisateur</h3>
+            <form action="/joueurs/utilisateur/add" method="POST" class="crud-form">
+                <div class="form-row">
+                    <label for="nom_utilisateur">Nom d'utilisateur</label>
+                    <input type="text" name="nom_utilisateur" id="nom_utilisateur" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="mot_de_passe">Mot de passe</label>
+                    <input type="password" name="mot_de_passe" id="mot_de_passe" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="id_permission">Rôle</label>
+                    <select name="id_permission" id="id_permission" required>
+                        <option value="1">Administrateur</option>
+                        <option value="2">Entraîneur</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-success">Créer l'utilisateur</button>
+                    <button type="button" onclick="toggleForm('utilisateur-form')" class="btn-secondary">Annuler</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Liste des utilisateurs -->
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <th>Rôle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($utilisateurs as $utilisateur): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($utilisateur['nom_utilisateur']) ?></td>
+                        <td>
+                            <span class="badge-role <?= $utilisateur['id_permission'] == 1 ? 'admin' : 'coach' ?>">
+                                <?= htmlspecialchars($utilisateur['role_nom']) ?>
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <a href="/joueurs/utilisateur/edit?id=<?= $utilisateur['id_utilisateur'] ?>" class="btn-edit">Modifier</a>
+                            <a href="/joueurs/utilisateur/delete?id=<?= $utilisateur['id_utilisateur'] ?>" 
+                               onclick="return confirm('Supprimer cet utilisateur ?')" 
+                               class="btn-delete">Supprimer</a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
+    
     <!-- Section Équipes (Admin seulement) -->
     <?php if ($isAdmin): ?>
     <div class="crud-section">

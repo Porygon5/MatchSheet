@@ -7,6 +7,7 @@ use App\Models\PlacementModel;
 use App\Models\PosteModel;
 use App\Models\ClubModel;
 use App\Models\EntraineurModel;
+use App\Models\UtilisateurModel;
 
 require_once __DIR__ . '/../Models/EquipeModel.php';
 require_once __DIR__ . '/../Models/JoueurModel.php';
@@ -14,6 +15,7 @@ require_once __DIR__ . '/../Models/PlacementModel.php';
 require_once __DIR__ . '/../Models/PosteModel.php';
 require_once __DIR__ . '/../Models/ClubModel.php';
 require_once __DIR__ . '/../Models/EntraineurModel.php';
+require_once __DIR__ . '/../Models/UtilisateurModel.php';
 
 class CrudController
 {
@@ -25,7 +27,7 @@ class CrudController
     }
 
     /**
-     * Affiche la page principale de gestion (équipes + joueurs)
+     * Affiche la page principale de gestion (équipes + joueurs + utilisateurs)
      * Accessible aux admins et entraîneurs avec des permissions différentes
      */
     public function index()
@@ -47,6 +49,7 @@ class CrudController
         $joueurModel     = new \App\Models\JoueurModel($this->pdo);
         $clubModel       = new \App\Models\ClubModel($this->pdo);
         $entraineurModel = new \App\Models\EntraineurModel($this->pdo);
+        $utilisateurModel = new \App\Models\UtilisateurModel($this->pdo);
         
         if ($isAdmin) {
             // Admin voit tout
@@ -54,9 +57,10 @@ class CrudController
             $joueurs     = $joueurModel->getAll();
             $clubs       = $clubModel->getAll();
             $entraineurs = $entraineurModel->getAll();
+            $utilisateurs = $utilisateurModel->getAll(); // Récupérer tous les utilisateurs pour l'admin
         } else {
             // Entraîneur voit seulement son équipe
-            $coachEquipeId = $this->getCoachTeamId($user['id']);
+            $coachEquipeId = $equipeModel->findTeamByCoachId($user['id']);
             if (!$coachEquipeId) {
                 echo "Aucune équipe assignée.";
                 return;
@@ -64,6 +68,7 @@ class CrudController
             
             $equipes = [$equipeModel->getById($coachEquipeId)];
             $joueurs = $joueurModel->getByEquipe($coachEquipeId);
+            $utilisateurs = []; // Les entraîneurs ne voient pas les utilisateurs
         }
 
         // Données pour les formulaires
@@ -192,11 +197,13 @@ class CrudController
             $id_placement = (int)($_POST['id_placement'] ?? 0);
             $id_equipe = (int)($_POST['id_equipe'] ?? 0);
 
+            $equipeModel = new \App\Models\EquipeModel($this->pdo);
+
             // Vérifications de base
             if ($nom && $prenom && $numero && $id_poste && $id_placement && $id_equipe) {
                 // Vérifier que l'entraîneur ne peut ajouter que dans son équipe
                 if (!$this->isAdmin()) {
-                    $coachEquipeId = $this->getCoachTeamId($_SESSION['user']['id']);
+                    $coachEquipeId = $equipeModel->findTeamByCoachId($_SESSION['user']['id']);
                     if ($id_equipe !== $coachEquipeId) {
                         http_response_code(403);
                         echo "Vous ne pouvez ajouter des joueurs que dans votre équipe";
@@ -231,6 +238,8 @@ class CrudController
             header('Location: /joueurs');
             exit;
         }
+
+        $equipeModel = new \App\Models\EquipeModel($this->pdo);
 
         // Vérifier les permissions entraîneur
         if (!$this->isAdmin()) {
@@ -293,6 +302,7 @@ class CrudController
             exit;
         }
 
+        $equipeModel = new \App\Models\EquipeModel($this->pdo);
         $joueurModel = new \App\Models\JoueurModel($this->pdo);
         $joueur = $joueurModel->findById($id);
         
@@ -303,7 +313,7 @@ class CrudController
 
         // Vérifier les permissions entraîneur
         if (!$this->isAdmin()) {
-            $coachEquipeId = $this->getCoachTeamId($_SESSION['user']['id']);
+            $coachEquipeId = $equipeModel->findTeamByCoachId($_SESSION['user']['id']);
             if ($joueur->equipeId !== $coachEquipeId) {
                 http_response_code(403);
                 echo "Vous ne pouvez supprimer que les joueurs de votre équipe";
@@ -367,25 +377,118 @@ class CrudController
         header('Location: /joueurs');
         exit;
     }
-    private function isAdmin(): bool
+
+    /**
+     * Ajoute un nouvel utilisateur (admin seulement)
+     */
+    public function addUtilisateur()
     {
-        return isset($_SESSION['user']) && (int)$_SESSION['user']['id_permission'] === 1;
+        if (!$this->isAdmin()) {
+            http_response_code(403);
+            echo "Accès refusé";
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom_utilisateur = trim($_POST['nom_utilisateur'] ?? '');
+            $mot_de_passe = trim($_POST['mot_de_passe'] ?? '');
+            $id_permission = (int)($_POST['id_permission'] ?? 1);
+
+            if ($nom_utilisateur && $mot_de_passe) {
+                $utilisateurModel = new \App\Models\UtilisateurModel($this->pdo);
+                $utilisateurModel->create($nom_utilisateur, $mot_de_passe, $id_permission);
+            }
+        }
+
+        header('Location: /joueurs');
+        exit;
     }
 
     /**
-     * Récupère l'ID de l'équipe d'un entraîneur
+     * Modifie un utilisateur existant (admin seulement)
      */
-    private function getCoachTeamId(int $userId): ?int
+    public function editUtilisateur()
     {
-        $stmt = $this->pdo->prepare("
-            SELECT e.id_equipe 
-            FROM equipes e 
-            WHERE e.id_entraineur = :user_id
-            LIMIT 1
-        ");
-        $stmt->execute([':user_id' => $userId]);
-        $result = $stmt->fetchColumn();
+        if (!$this->isAdmin()) {
+            http_response_code(403);
+            echo "Accès refusé";
+            return;
+        }
+
+        $id = (int)($_GET['id'] ?? 0);
+        if (!$id) {
+            header('Location: /joueurs');
+            exit;
+        }
+
+        $utilisateurModel = new \App\Models\UtilisateurModel($this->pdo);
         
-        return $result ? (int)$result : null;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom_utilisateur = trim($_POST['nom_utilisateur'] ?? '');
+            $id_permission = (int)($_POST['id_permission'] ?? 1);
+            $nouveau_mot_de_passe = trim($_POST['nouveau_mot_de_passe'] ?? '');
+
+            if ($nom_utilisateur) {
+                try {
+                    $utilisateurModel->updateUser($id, $nom_utilisateur, $id_permission);
+                    
+                    // Mettre à jour le mot de passe si fourni
+                    if ($nouveau_mot_de_passe) {
+                        $utilisateurModel->updatePassword($id, $nouveau_mot_de_passe);
+                    }
+                } catch (Exception $e) {
+                    $_SESSION['error'] = "Erreur lors de la modification : " . $e->getMessage();
+                }
+            }
+
+            header('Location: /joueurs');
+            exit;
+        }
+
+        // Affichage du formulaire de modification
+        $utilisateur = $utilisateurModel->findById($id);
+        if (!$utilisateur) {
+            header('Location: /joueurs');
+            exit;
+        }
+
+        $title = "Modifier l'utilisateur";
+        $pageCss = "/assets/pages/crud.css";
+        $view = __DIR__ . '/../Views/edit_utilisateur.php';
+
+        require __DIR__ . '/../Views/layout.php';
+    }
+
+    /**
+     * Supprime un utilisateur (admin seulement)
+     */
+    public function deleteUtilisateur()
+    {
+        if (!$this->isAdmin()) {
+            http_response_code(403);
+            echo "Accès refusé";
+            return;
+        }
+
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id) {
+            // Empêcher la suppression de son propre compte
+            if ($id === (int)$_SESSION['user']['id']) {
+                $_SESSION['error'] = "Vous ne pouvez pas supprimer votre propre compte";
+                header('Location: /joueurs');
+                exit;
+            }
+
+            $utilisateurModel = new \App\Models\UtilisateurModel($this->pdo);
+            $utilisateurModel->delete($id);
+        }
+
+        header('Location: /joueurs');
+        exit;
+    }
+
+    private function isAdmin(): bool
+    {
+        return isset($_SESSION['user']) && (int)$_SESSION['user']['id_permission'] === 1;
     }
 }

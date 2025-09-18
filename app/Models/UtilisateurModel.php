@@ -3,6 +3,8 @@
 
 namespace App\Models;
 
+require_once __DIR__ . '/../Entities/Utilisateur.php';
+
 use PDO;
 use App\Entities\Utilisateur;
 
@@ -78,5 +80,54 @@ class UtilisateurModel
                 WHERE id_utilisateur = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['hash' => $hash, 'id' => $id]);
+    }
+
+    /**
+     * Met à jour les informations d'un utilisateur
+     */
+    public function updateUser(int $id, string $nomUtilisateur, int $idPermission): bool
+    {
+        $sql = "UPDATE utilisateurs 
+                SET nom_utilisateur = :nom, id_permission = :perm
+                WHERE id_utilisateur = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'nom' => $nomUtilisateur,
+            'perm' => $idPermission,
+            'id' => $id
+        ]);
+    }
+
+    /**
+     * Supprime un utilisateur
+     */
+    public function delete(int $id): bool
+    {
+        $sql = "DELETE FROM utilisateurs WHERE id_utilisateur = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * Récupère tous les utilisateurs avec leurs rôles
+     */
+    public function getAll(): array
+    {
+        $sql = "
+            SELECT 
+                id_utilisateur,
+                nom_utilisateur,
+                id_permission,
+                CASE 
+                    WHEN id_permission = 1 THEN 'Administrateur'
+                    WHEN id_permission = 2 THEN 'Entraîneur'
+                    ELSE 'Utilisateur'
+                END as role_nom
+            FROM utilisateurs
+            ORDER BY nom_utilisateur ASC
+        ";
+
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
     }
 }

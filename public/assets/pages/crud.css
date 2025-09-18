@@ -166,3 +166,28 @@
     .data-table { font-size: 0.9em; }
     .data-table th, .data-table td { padding: 8px; }
 }
+
+/* Gestion des comptes */
+
+.badge-role {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.badge-role.admin {
+    background: #dc3545;
+    color: white;
+}
+
+.badge-role.coach {
+    background: #17a2b8;
+    color: white;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
